@@ -1,0 +1,17 @@
+.footer-info-page { min-height: 100vh; padding: 7.5rem 0 5rem; background: var(--bg-dark); }
+.footer-info-container { width: min(860px, calc(100% - 2rem)); margin: 0 auto; }
+.footer-info-back { display: inline-flex; align-items: center; gap: 0.5rem; margin-bottom: 1.25rem; color: var(--text-muted); font-size: 0.9rem; }
+.footer-info-back:hover { color: var(--primary); }
+.footer-info-card { padding: clamp(1.5rem, 5vw, 3.25rem); background: var(--bg-card); border: 1px solid var(--border-color); border-radius: var(--radius-xl); }
+.footer-info-icon { display: grid; width: 52px; height: 52px; place-items: center; color: var(--primary); background: var(--primary-soft); border: 1px solid var(--primary-border); border-radius: var(--radius-lg); }
+.footer-info-eyebrow { margin-top: 1.6rem; color: var(--primary); font-size: 0.75rem; font-weight: 700; letter-spacing: 0.14em; }
+.footer-info-card h1 { margin-top: 0.45rem; color: var(--text-main); font-size: clamp(2rem, 5vw, 2.8rem); }
+.footer-info-intro { max-width: 680px; margin-top: 0.8rem; color: var(--text-muted); font-size: 1.02rem; line-height: 1.7; }
+.footer-info-blocks { display: grid; gap: 1.25rem; margin-top: 2rem; }
+.footer-info-blocks section { padding: 1.1rem 0; border-top: 1px solid var(--border-subtle); }
+.footer-info-blocks h2 { color: var(--text-main); font-size: 1.05rem; }
+.footer-info-blocks p { margin-top: 0.4rem; color: var(--text-muted); font-size: 0.92rem; line-height: 1.7; }
+.footer-info-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 1rem; margin-top: 1.5rem; }
+.footer-info-primary { display: inline-flex; align-items: center; gap: 0.55rem; padding: 0.75rem 1rem; color: var(--text-dark); background: var(--primary); border-radius: var(--radius-md); font-size: 0.9rem; font-weight: 700; }
+.footer-info-primary:hover { background: var(--primary-hover); }
+.footer-info-secondary { color: var(--primary); font-size: 0.9rem; font-weight: 600; }

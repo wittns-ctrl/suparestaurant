@@ -1,0 +1,153 @@
+.app-download {
+  padding: 6rem 0 2rem; /* Less padding bottom to let the image bleed if needed */
+  background: radial-gradient(circle at right center, rgba(245, 166, 35, 0.05) 0%, transparent 50%);
+  overflow: hidden;
+}
+
+.app-download-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.app-content {
+  flex: 1;
+  max-width: 500px;
+  z-index: 2;
+}
+
+.app-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.4rem 0.8rem;
+  border: 1px solid rgba(245, 166, 35, 0.3);
+  border-radius: var(--radius-full);
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 1px;
+  color: var(--text-muted);
+  margin-bottom: 1.5rem;
+  background-color: rgba(245, 166, 35, 0.05);
+}
+
+.app-title {
+  font-size: 3rem;
+  margin-bottom: 1rem;
+  line-height: 1.2;
+}
+
+.app-description {
+  color: var(--text-muted);
+  margin-bottom: 2.5rem;
+  font-size: 1.1rem;
+}
+
+.store-buttons {
+  display: flex;
+  gap: 1rem;
+}
+
+.app-coming-soon {
+  margin-top: 0.85rem;
+  color: var(--text-muted);
+  font-size: 0.82rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+}
+
+.store-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  background-color: transparent;
+  border: 1px solid var(--border-color);
+  padding: 0.6rem 1.2rem;
+  border-radius: var(--radius-md);
+  transition: all var(--transition-fast);
+}
+
+.store-btn:hover {
+  background-color: rgba(255, 255, 255, 0.05);
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+.store-btn svg {
+  width: 24px;
+  height: 24px;
+}
+
+.store-btn-text {
+  display: flex;
+  flex-direction: column;
+}
+
+.store-btn-text span {
+  font-size: 0.65rem;
+  line-height: 1;
+  color: var(--text-muted);
+}
+
+.store-btn-text strong {
+  font-size: 1rem;
+  line-height: 1.2;
+  font-weight: 600;
+}
+
+.app-image-wrapper {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+  position: relative;
+  z-index: 1;
+}
+
+.app-mockup-image {
+  max-width: 100%;
+  height: auto;
+  max-height: 600px;
+  object-fit: contain;
+  /* Add a subtle glow behind the phone */
+  filter: drop-shadow(0 0 60px rgba(245, 166, 35, 0.15));
+  transform: perspective(1000px) rotateY(-5deg) rotateX(5deg);
+  transition: transform var(--transition-normal);
+}
+
+.app-image-wrapper:hover .app-mockup-image {
+  transform: perspective(1000px) rotateY(0deg) rotateX(0deg);
+}
+
+@media (max-width: 1024px) {
+  .app-download-container {
+    flex-direction: column;
+    text-align: center;
+    gap: 4rem;
+  }
+  
+  .app-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .app-mockup-image {
+    max-height: 500px;
+  }
+}
+
+@media (max-width: 640px) {
+  .store-buttons {
+    flex-direction: column;
+    width: 100%;
+    max-width: 300px;
+  }
+  
+  .store-btn {
+    justify-content: center;
+  }
+  
+  .app-title {
+    font-size: 2.2rem;
+  }
+}

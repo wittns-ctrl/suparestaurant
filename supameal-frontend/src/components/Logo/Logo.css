@@ -1,0 +1,19 @@
+.logo-container {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 1.5rem; /* Base size for the logo */
+}
+
+.logo-text {
+  font-size: 1em; /* Inherits from container */
+  font-weight: 700;
+  color: var(--text-main);
+  line-height: 1;
+}
+
+.logo-icon {
+  height: 1em; /* Matches the text font-size exactly */
+  width: auto;
+  object-fit: contain;
+}

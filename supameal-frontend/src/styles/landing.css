@@ -1,0 +1,165 @@
+.landing-page{
+  min-height:100vh;
+
+  background:
+  linear-gradient(
+    rgba(0,0,0,.82),
+    rgba(0,0,0,.82)
+  ),
+  url("/bg.jpg");
+
+  background-size:cover;
+  background-position:center;
+}
+
+.main-panel{
+  width:95%;
+  margin:auto;
+
+  border:1px solid rgba(216,149,54,.5);
+
+  border-radius:20px;
+
+  display:grid;
+
+  grid-template-columns:1fr 1fr;
+
+  overflow:hidden;
+
+  backdrop-filter:blur(10px);
+}
+
+.left-side{
+  padding:50px;
+  border-right:1px solid rgba(216,149,54,.25);
+}
+
+.right-side{
+  padding:50px;
+}
+
+.brand h1{
+  font-family:'Playfair Display';
+
+  font-size:70px;
+
+  margin-top:20px;
+}
+
+.brand span{
+  color:var(--gold);
+}
+
+.brand p{
+  margin:10px 0 25px;
+  color:#cfcfcf;
+}
+
+.brand button{
+  background:var(--gold);
+
+  border:none;
+
+  padding:14px 30px;
+
+  color:white;
+
+  cursor:pointer;
+}
+
+.food-image{
+  width:100%;
+  max-width:500px;
+  margin-top:40px;
+}
+
+.feature-list{
+  margin-top:40px;
+}
+
+.feature-item{
+  border:1px solid rgba(216,149,54,.25);
+
+  margin-bottom:10px;
+
+  padding:20px;
+
+  display:flex;
+  gap:15px;
+  align-items:center;
+}
+
+.services{
+  display:flex;
+  gap:15px;
+}
+
+.service-card{
+  flex:1;
+
+  min-height:130px;
+
+  border:1px solid rgba(216,149,54,.3);
+
+  display:flex;
+
+  flex-direction:column;
+
+  justify-content:center;
+  align-items:center;
+
+  gap:10px;
+}
+
+.service-card svg{
+  color:var(--gold);
+  font-size:28px;
+}
+
+.right-side h2{
+  margin-top:50px;
+  margin-bottom:25px;
+}
+
+.contact-form{
+  display:flex;
+  flex-direction:column;
+  gap:15px;
+}
+
+.contact-form input,
+.contact-form textarea{
+  background:transparent;
+
+  border:1px solid rgba(216,149,54,.35);
+
+  color:white;
+
+  padding:15px;
+}
+
+.contact-form button{
+  background:var(--gold);
+
+  border:none;
+
+  padding:15px;
+
+  color:white;
+}
+@media(max-width:900px){
+
+  .main-panel,
+  .auth-wrapper{
+      grid-template-columns:1fr;
+  }
+
+  .navbar{
+      justify-content:center;
+      flex-wrap:wrap;
+  }
+
+  .brand h1{
+      font-size:50px;
+  }
+}

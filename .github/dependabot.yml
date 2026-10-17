@@ -1,0 +1,32 @@
+# Dependabot — weekly dependency + GitHub Actions updates
+version: 2
+updates:
+  # Backend (NestJS)
+  - package-ecosystem: npm
+    directory: /SPML_backend/supameal_backend
+    schedule:
+      interval: weekly
+    groups:
+      minor-and-patch:
+        update-types:
+          - minor
+          - patch
+    open-pull-requests-limit: 5
+
+  # Frontend (React/Vite)
+  - package-ecosystem: npm
+    directory: /supameal-frontend
+    schedule:
+      interval: weekly
+    groups:
+      minor-and-patch:
+        update-types:
+          - minor
+          - patch
+    open-pull-requests-limit: 5
+
+  # CI workflow actions
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: monthly

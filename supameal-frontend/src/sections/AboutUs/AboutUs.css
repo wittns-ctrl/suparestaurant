@@ -1,0 +1,84 @@
+.about-us {
+  padding: 6rem 0;
+  background-color: var(--bg-dark);
+}
+
+.about-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 4rem;
+  align-items: center;
+}
+
+.about-description {
+  color: var(--text-muted);
+  font-size: 1.1rem;
+  line-height: 1.8;
+  margin-bottom: 1.5rem;
+}
+
+.about-values {
+  display: flex;
+  gap: 2rem;
+  margin-top: 3rem;
+  padding-top: 2rem;
+  border-top: 1px solid var(--border-color);
+}
+
+.value-item {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  color: var(--text-main);
+  font-weight: 600;
+}
+
+.about-images {
+  position: relative;
+  height: 500px;
+}
+
+.about-img-main {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 80%;
+  height: 80%;
+  border-radius: var(--radius-lg);
+  background-image: url('../../assets/images/restaurant_interior.png');
+  background-size: cover;
+  background-position: center;
+  box-shadow: none;
+}
+
+.about-img-secondary {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 60%;
+  height: 60%;
+  border-radius: var(--radius-lg);
+  background-image: url('../../assets/images/hero_food.png');
+  background-size: cover;
+  background-position: center;
+  border: 0;
+  box-shadow: none;
+}
+
+@media (max-width: 992px) {
+  .about-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .about-images {
+    height: 400px;
+    margin-top: 2rem;
+  }
+}
+
+@media (max-width: 640px) {
+  .about-values {
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+}

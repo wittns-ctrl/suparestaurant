@@ -1,0 +1,248 @@
+.confirm-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 12000;
+  display: grid;
+  place-items: center;
+  padding: 1rem;
+  background: rgba(4, 6, 5, 0.72);
+  backdrop-filter: blur(4px);
+  animation: confirm-overlay-in 140ms ease-out;
+}
+
+.confirm-dialog {
+  position: relative;
+  width: min(100%, 460px);
+  padding: 2.25rem 2rem 1.75rem;
+  color: var(--text-main, #f5f5f4);
+  text-align: center;
+  background: linear-gradient(155deg, #191c19 0%, #121512 100%);
+  border: 1px solid #343a34;
+  border-radius: 18px;
+  box-shadow: 0 18px 44px rgba(0, 0, 0, 0.28);
+  animation: confirm-dialog-in 180ms ease-out;
+}
+
+.confirm-dialog__close {
+  position: absolute;
+  top: 0.75rem;
+  right: 0.75rem;
+  display: grid;
+  width: 2.25rem;
+  height: 2.25rem;
+  place-items: center;
+  padding: 0;
+  color: var(--text-muted, #b5bdc7);
+  background: transparent;
+  border: 0;
+  border-radius: 50%;
+  cursor: pointer;
+}
+
+.confirm-dialog__close:hover {
+  color: var(--text-main, #f5f5f4);
+  background: rgba(255, 255, 255, 0.07);
+}
+
+.confirm-dialog--logout {
+  width: min(100%, 480px);
+  min-height: 0;
+  padding: 40px 30px 30px;
+  border: 1px solid #28313a;
+  border-radius: 20px;
+  background: radial-gradient(ellipse at center, #12181c 0%, #0e1215 72%);
+  box-shadow: none;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.confirm-dialog--logout .confirm-dialog__close {
+  top: 14px;
+  right: 14px;
+  width: 40px;
+  height: 40px;
+}
+
+.confirm-dialog--logout .confirm-dialog__icon {
+  width: 68px;
+  height: 68px;
+  margin-bottom: 16px;
+  background: transparent;
+  border: 3px solid var(--primary, #f5a623);
+}
+
+.confirm-dialog--logout .confirm-dialog__icon svg {
+  width: 32px;
+  height: 32px;
+}
+
+.confirm-dialog--logout h2 {
+  margin-bottom: 10px;
+  font-size: clamp(1.45rem, 2.5vw, 1.8rem);
+  font-weight: 700;
+  line-height: 1.15;
+}
+
+.confirm-dialog--logout p {
+  max-width: 370px;
+  font-size: 1rem;
+  line-height: 1.5;
+}
+
+.confirm-dialog--logout .confirm-dialog__actions {
+  gap: 12px;
+  margin-top: 22px;
+}
+
+.confirm-dialog--logout .confirm-dialog__actions button {
+  min-width: 140px;
+  padding: 11px 18px;
+  border-radius: 10px;
+  font-size: 0.95rem;
+}
+
+.confirm-dialog--logout .confirm-dialog__cancel {
+  background: transparent;
+  border: 2px solid #3b4650 !important;
+}
+
+.confirm-dialog--logout .confirm-dialog__cancel:hover {
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.confirm-dialog__icon {
+  display: grid;
+  width: 56px;
+  height: 56px;
+  margin: 0 auto 1.15rem;
+  place-items: center;
+  color: var(--primary, #f5a623);
+  background: var(--primary-soft, rgba(245, 166, 35, 0.14));
+  border: 1px solid var(--primary-border, rgba(245, 166, 35, 0.4));
+  border-radius: 16px;
+}
+
+.confirm-dialog--danger .confirm-dialog__icon {
+  color: var(--error, #f07070);
+  background: rgba(240, 112, 112, 0.1);
+  border-color: rgba(240, 112, 112, 0.28);
+}
+
+.confirm-dialog h2 {
+  margin: 0 0 0.6rem;
+  font-size: 1.3rem;
+  font-weight: 700;
+  letter-spacing: -0.015em;
+}
+
+.confirm-dialog p {
+  margin: 0;
+  color: var(--text-muted, #b5b5ae);
+  font-size: 0.94rem;
+  line-height: 1.65;
+}
+
+.confirm-dialog__actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.7rem;
+  margin-top: 1.65rem;
+}
+
+.confirm-dialog__actions button {
+  min-width: 120px;
+  padding: 0.72rem 1.1rem;
+  border: 1px solid transparent;
+  border-radius: 9px;
+  font: inherit;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background var(--transition-fast, 0.2s ease), border-color var(--transition-fast, 0.2s ease), transform var(--transition-fast, 0.2s ease);
+}
+
+.confirm-dialog__actions button:hover {
+  filter: brightness(1.06);
+}
+
+.confirm-dialog__actions button:focus-visible,
+.confirm-dialog__close:focus-visible {
+  outline: 2px solid var(--primary, #f5a623);
+  outline-offset: 3px;
+}
+
+.confirm-dialog__cancel {
+  color: #e5e7e3;
+  background: #20241f;
+  border-color: #3a4039 !important;
+}
+
+.confirm-dialog__cancel:hover {
+  background: #292e28;
+}
+
+.confirm-dialog__confirm {
+  color: var(--text-dark, #121212);
+  background: var(--primary, #f5a623);
+  border-color: var(--primary, #f5a623) !important;
+}
+
+.confirm-dialog__confirm:hover {
+  background: var(--primary-hover, #d98b16);
+}
+
+.confirm-dialog__confirm:disabled {
+  opacity: 0.6;
+  cursor: wait;
+  transform: none;
+}
+
+.confirm-dialog--danger .confirm-dialog__confirm {
+  color: #fff4f3;
+  background: #8f3939;
+  border-color: #a94b4b !important;
+}
+
+.confirm-dialog--danger .confirm-dialog__confirm:hover {
+  background: #a14444;
+}
+
+@keyframes confirm-overlay-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes confirm-dialog-in {
+  from { opacity: 0; transform: translateY(8px) scale(0.98); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+@media (max-width: 720px) {
+  .confirm-dialog--logout {
+    min-height: 0;
+    padding: 3.5rem 1.5rem 1.5rem;
+  }
+  .confirm-dialog--logout .confirm-dialog__icon { width: 72px; height: 72px; }
+  .confirm-dialog--logout .confirm-dialog__icon svg { width: 34px; height: 34px; }
+  .confirm-dialog--logout .confirm-dialog__actions { gap: 12px; margin-top: 24px; }
+  .confirm-dialog--logout .confirm-dialog__actions button { min-width: 0; flex: 1; }
+}
+
+@media (max-width: 420px) {
+  .confirm-dialog { padding: 2.5rem 1.1rem 1.25rem; }
+  .confirm-dialog__actions { flex-direction: column-reverse; }
+  .confirm-dialog__actions button { width: 100%; }
+  .confirm-dialog--logout {
+    min-height: 0;
+    padding: 3.25rem 1.25rem 1.25rem;
+    border-radius: 18px;
+  }
+  .confirm-dialog--logout .confirm-dialog__close { top: 12px; right: 12px; }
+  .confirm-dialog--logout .confirm-dialog__icon { width: 64px; height: 64px; margin-bottom: 16px; }
+  .confirm-dialog--logout .confirm-dialog__icon svg { width: 30px; height: 30px; }
+  .confirm-dialog--logout h2 { margin-bottom: 10px; }
+  .confirm-dialog--logout .confirm-dialog__actions { width: 100%; gap: 10px; margin-top: 20px; }
+  .confirm-dialog--logout .confirm-dialog__actions button { min-width: 0; padding: 12px; font-size: 1rem; }
+}

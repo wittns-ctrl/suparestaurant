@@ -1,0 +1,24 @@
+.native-dropdown {
+  position: relative;
+  width: 100%;
+  font-family: inherit;
+  font-size: 0.95rem;
+  min-width: 0;
+  padding: 0.65rem 2rem 0.65rem 0.75rem;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  appearance: none;
+  color: var(--text-main);
+  background-color: var(--bg-input);
+  cursor: pointer;
+}
+
+.native-dropdown:focus-visible {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px var(--primary-soft);
+}
+
+.native-dropdown option {
+  color: var(--text-main);
+  background-color: var(--bg-card);
+}

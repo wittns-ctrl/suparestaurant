@@ -1,0 +1,40 @@
+.input-wrapper {
+  display: flex;
+  align-items: center;
+  background-color: transparent;
+  border-radius: var(--radius-md);
+  padding: 0.5rem 0;
+  gap: 0.75rem;
+  border-bottom: 1px solid var(--border-color);
+  transition: border-color var(--transition-fast);
+}
+
+.input-wrapper:focus-within {
+  border-bottom-color: var(--primary);
+  box-shadow: 0 2px 0 var(--primary);
+}
+
+.input-icon {
+  color: var(--primary);
+  flex-shrink: 0;
+}
+
+.input-field {
+  background: transparent;
+  border: none;
+  color: var(--text-main);
+  font-family: inherit;
+  font-size: 0.9rem;
+  width: 100%;
+  outline: none;
+}
+
+.input-field::placeholder {
+  color: var(--text-muted);
+}
+
+/* For select inputs that might use this wrapper */
+select.input-field {
+  appearance: none;
+  cursor: pointer;
+}

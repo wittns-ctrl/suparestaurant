@@ -1,0 +1,11 @@
+node_modules/
+.env
+.env.*
+# Keep the documented example env files tracked
+!.env.*.example
+dist/
+build/
+coverage/
+*.log
+# Local tool caches
+tmp/

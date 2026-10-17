@@ -1,0 +1,31 @@
+.navbar{
+  display:flex;
+  justify-content:flex-end;
+  gap:40px;
+  padding:20px 40px;
+}
+
+.navbar a{
+  color:white;
+  font-size:13px;
+}
+
+.navbar a:hover{
+  color:var(--gold);
+}
+@media(max-width:900px){
+
+  .main-panel,
+  .auth-wrapper{
+      grid-template-columns:1fr;
+  }
+
+  .navbar{
+      justify-content:center;
+      flex-wrap:wrap;
+  }
+
+  .brand h1{
+      font-size:50px;
+  }
+}

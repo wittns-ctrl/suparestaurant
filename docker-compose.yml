@@ -1,0 +1,93 @@
+# SupaMeal — full local stack: Mongo + API + web frontend
+#
+# Usage:
+#   cp .env.docker.example .env   (fill in real values)
+#   docker compose up --build
+#
+# Frontend:  http://localhost:8080
+# API:       http://localhost:3000
+
+services:
+  mongo:
+    image: mongo:7
+    restart: unless-stopped
+    volumes:
+      - mongo_data:/data/db
+    # Not published to the host by default — only the API talks to it.
+    # To inspect from your machine, uncomment:
+    # ports:
+    #   - "27017:27017"
+    healthcheck:
+      test: ["CMD", "mongosh", "--quiet", "--eval", "db.adminCommand('ping')"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
+
+  api:
+    build:
+      context: ./SPML_backend/supameal_backend
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      NODE_ENV: production
+      PORT: 3000
+      MONGO_URI: mongodb://mongo:27017/supameal
+      # ── Required: set these in .env before running ──
+      JWT_SECRET: ${JWT_SECRET:?Set JWT_SECRET in .env (32+ chars)}
+      JWT_REFRESH: ${JWT_REFRESH:?Set JWT_REFRESH in .env (32+ chars)}
+      FRONTEND_URL: ${FRONTEND_URL:-http://localhost:8080}
+      CORS_ORIGINS: ${CORS_ORIGINS:-http://localhost:8080,http://localhost:5173}
+      # ── Optional integrations ──
+      # PayPal credentials are required in production; keep the secret backend-only
+      PAYPAL_CLIENT_ID: ${PAYPAL_CLIENT_ID:?Set PAYPAL_CLIENT_ID in .env}
+      PAYPAL_CLIENT_SECRET: ${PAYPAL_CLIENT_SECRET:?Set PAYPAL_CLIENT_SECRET in .env}
+      PAYPAL_ENV: ${PAYPAL_ENV:-sandbox}
+      PAYPAL_CURRENCY: ${PAYPAL_CURRENCY:-USD}
+      SMTP_HOST: ${SMTP_HOST:-}
+      SMTP_PORT: ${SMTP_PORT:-587}
+      SMTP_USER: ${SMTP_USER:-}
+      SMTP_PASS: ${SMTP_PASS:-}
+      FROM_EMAIL: ${FROM_EMAIL:-}
+      SUPPORT_EMAIL: ${SUPPORT_EMAIL:-mugishawitness15@gmail.com}
+      RESEND_API_KEY: ${RESEND_API_KEY:-}
+      GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID:-}
+      GOOGLE_CLIENT_SECRET: ${GOOGLE_CLIENT_SECRET:-}
+      GOOGLE_CALLBACK_URL: ${GOOGLE_CALLBACK_URL:-http://localhost:3000/auth/google/callback}
+      THROTTLE_TTL_MS: ${THROTTLE_TTL_MS:-60000}
+      THROTTLE_LIMIT: ${THROTTLE_LIMIT:-100}
+      SEED_DEMO_DATA: ${SEED_DEMO_DATA:-false}
+      TRUST_PROXY: ${TRUST_PROXY:-1}
+      UPLOAD_DIR: /app/uploads
+    volumes:
+      # Uploaded restaurant/menu images must survive container rebuilds
+      - uploads_data:/app/uploads
+    depends_on:
+      mongo:
+        condition: service_healthy
+
+  web:
+    build:
+      context: ./supameal-frontend
+      args:
+        # Baked into the bundle at build time — must be reachable from the browser
+        VITE_API_URL: ${VITE_API_URL:-http://localhost:3000}
+        VITE_SOCIAL_FACEBOOK_URL: ${VITE_SOCIAL_FACEBOOK_URL:-}
+        VITE_SOCIAL_INSTAGRAM_URL: ${VITE_SOCIAL_INSTAGRAM_URL:-}
+        VITE_SOCIAL_TWITTER_URL: ${VITE_SOCIAL_TWITTER_URL:-}
+        VITE_SOCIAL_X_URL: ${VITE_SOCIAL_X_URL:-}
+        VITE_SOCIAL_LINKEDIN_URL: ${VITE_SOCIAL_LINKEDIN_URL:-}
+        VITE_SOCIAL_WHATSAPP_URL: ${VITE_SOCIAL_WHATSAPP_URL:-}
+        VITE_WHATSAPP_PHONE: ${VITE_WHATSAPP_PHONE:-}
+        VITE_SUPPORT_EMAIL: ${VITE_SUPPORT_EMAIL:-mugishawitness15@gmail.com}
+        VITE_CAREERS_EMAIL: ${VITE_CAREERS_EMAIL:-careers@supameal.com}
+    restart: unless-stopped
+    ports:
+      - "8080:80"
+    depends_on:
+      - api
+
+volumes:
+  mongo_data:
+  uploads_data:
