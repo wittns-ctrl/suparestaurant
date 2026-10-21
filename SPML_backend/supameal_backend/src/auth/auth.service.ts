@@ -78,11 +78,16 @@ export class AuthService {
     return email ? email.trim().toLowerCase() : '';
   }
 
-  private findUserByEmail(email: string, accountType: AuthAccountType = AuthAccountType.CUSTOMER) {
+  private findUserByEmail(
+    email: string,
+    accountType: AuthAccountType = AuthAccountType.CUSTOMER,
+    primaryAdminOnly = false,
+  ) {
     const normalized = this.normalizeEmail(email);
     if (!normalized) return null;
     return this.userModel.findOne({
       accountType,
+      ...(primaryAdminOnly ? { isPrimaryAdmin: true } : {}),
       email: { $regex: new RegExp(`^${normalized.replace(/[.*+?^${}()|[\\]\\\\]/g, '\\\\$&')}$`, 'i') },
     });
   }
@@ -287,7 +292,11 @@ export class AuthService {
   }
 
   async signin(signinDto: loginAuthDto, accountType = AuthAccountType.CUSTOMER) {
-    const user = await this.findUserByEmail(signinDto.email, accountType);
+    const user = await this.findUserByEmail(
+      signinDto.email,
+      accountType,
+      accountType === AuthAccountType.ADMIN,
+    );
 
     if (!user) {
       throw new UnauthorizedException('Unable to sign in with these credentials. Check your details and account status.');
@@ -543,9 +552,15 @@ export class AuthService {
     }
 
     const userId = payload.sub;
-    const user = await this.userModel.findById(userId);
+    const user = await this.userModel.findById(userId).select('+isPrimaryAdmin');
     if (payload.accountType !== accountType || user?.accountType !== accountType) {
       throw new UnauthorizedException('Refresh session belongs to another account type');
+    }
+    if (
+      accountType === AuthAccountType.ADMIN &&
+      user?.isPrimaryAdmin !== true
+    ) {
+      throw new UnauthorizedException('Admin access is not enabled for this account');
     }
     if (!user || !payload.sid || !user.authSessions?.length) {
       throw new UnauthorizedException('Refresh token has been revoked');

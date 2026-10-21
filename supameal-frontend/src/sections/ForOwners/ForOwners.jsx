@@ -1,4 +1,3 @@
-import React from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowRight, BarChart2, ListOrdered, Edit3 } from 'lucide-react';
 import Button from '../../components/Button/Button';

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { Package, CalendarCheck, Heart, TrendingUp, Clock, Star, Utensils } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { resolveImageUrl, usersApi } from '../../services/api';

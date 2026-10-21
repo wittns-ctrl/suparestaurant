@@ -92,4 +92,5 @@ export const orderSchema = SchemaFactory.createForClass(order);
 
 orderSchema.index({ customerId: 1, createdAt: -1 });
 orderSchema.index({ restaurantId: 1, createdAt: -1 });
+orderSchema.index({ restaurantId: 1, status: 1, updatedAt: -1 });
 orderSchema.index({ status: 1, createdAt: -1 });

@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useCallback, useEffect } from 'react';
+import { createContext, useContext, useState, useCallback, useEffect } from 'react';
 
 const NotificationsContext = createContext(null);
 
@@ -37,13 +37,11 @@ export const NotificationsProvider = ({ children }) => {
 
   const addNotification = useCallback((data) => {
     const record = {
-      id: nextId(),
       title: data?.title || 'Notification',
       message: data?.message || '',
       read: false,
       createdAt: new Date().toISOString(),
       ...(data && typeof data === 'object' ? data : {}),
-      id: undefined,
     };
     record.id = nextId();
     setNotifications((prev) => [record, ...prev]);

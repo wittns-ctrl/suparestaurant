@@ -56,8 +56,8 @@ export const restaurantsApi = {
 
 // Menus
 export const menusApi = {
-  list: (restaurantId) => apiRequest(`/menus${restaurantId ? `?restaurantId=${restaurantId}` : ''}`),
-  listForOwner: (restaurantId) => apiRequest(`/menus/owner/${restaurantId}`),
+  list: (restaurantId, params = {}) => apiRequest(`/menus${buildQuery({ restaurantId, ...params })}`),
+  listForOwner: (restaurantId, params = {}) => apiRequest(`/menus/owner/${restaurantId}${buildQuery(params)}`),
   create: (data) => apiRequest('/menus', { method: 'POST', body: JSON.stringify(data) }),
   update: (id, data) => apiRequest(`/menus/${id}`, { method: 'PATCH', body: JSON.stringify(data) }),
   delete: (id) => apiRequest(`/menus/${id}`, { method: 'DELETE' }),
@@ -80,6 +80,7 @@ export const uploadsApi = {
     if (!res.ok) throw new ApiError(data.message || 'Upload failed', res.status);
     return data; // { url, size }
   },
+  remove: (publicId) => apiRequest(`/uploads?publicId=${encodeURIComponent(publicId)}`, { method: 'DELETE' }),
 };
 
 // Resolve a stored image reference to a browser-usable URL.
@@ -141,7 +142,7 @@ export const usersApi = {
 
 // Reviews
 export const reviewsApi = {
-  list: (restaurantId) => apiRequest(`/reviews${restaurantId ? `?restaurantId=${restaurantId}` : ''}`),
+  list: (restaurantId, params = {}) => apiRequest(`/reviews${buildQuery({ restaurantId, ...params })}`),
   create: (data) => apiRequest('/reviews', { method: 'POST', body: JSON.stringify(data) }),
 };
 

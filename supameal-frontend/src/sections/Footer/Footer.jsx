@@ -1,8 +1,7 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowRight } from 'lucide-react';
 import { FaFacebookF, FaInstagram, FaTwitter, FaLinkedinIn, FaWhatsapp } from 'react-icons/fa';
-import Button from '../../components/Button/Button';
 import Logo from '../../components/Logo/Logo';
 import { newsletterApi } from '../../services/api';
 import './Footer.css';

@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect, useCallback } from 'react';
+import { useState, useRef, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ShieldCheck, ArrowRight, RefreshCw, CheckCircle, AlertCircle } from 'lucide-react';
 import AuthLayout from '../../layouts/AuthLayout';

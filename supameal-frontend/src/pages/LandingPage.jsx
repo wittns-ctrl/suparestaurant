@@ -1,4 +1,3 @@
-import React from 'react';
 import Navbar from '../sections/Navbar/Navbar';
 import Hero from '../sections/Hero/Hero';
 import TrustedPartners from '../sections/TrustedPartners/TrustedPartners';

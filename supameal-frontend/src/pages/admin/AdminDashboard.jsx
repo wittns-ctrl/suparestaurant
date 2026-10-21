@@ -1,11 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import { restaurantsApi, usersApi, notificationsApi, adminApi, newsletterApi } from '../../services/api';
 import DashboardLayout from '../../layouts/DashboardLayout/DashboardLayout';
 import ConfirmDialog from '../../components/ConfirmDialog';
 import {
   BarChart2, Users, Store, CheckCircle, XCircle, Ban, TrendingUp,
-  Bell, Settings, AlertCircle, ShieldCheck, UserCheck, UserX, RefreshCw, Send
+  Bell, Settings, AlertCircle, UserCheck, UserX, RefreshCw, Send
 } from 'lucide-react';
 import '../customer/dashboard.css';
 
@@ -44,7 +44,7 @@ export const adminSidebarConfig = [
 ];
 
 // ── Reusable SVG Bar Chart ─────────────────────────────────────────────────
-const BarChartSVG = ({ data, color = 'var(--primary)', label }) => {
+const BarChartSVG = ({ data, color = 'var(--primary)' }) => {
   const max = Math.max(1, ...data.map(d => Number(d.value) || 0));
   const w = 420, h = 160, padL = 40, padB = 30;
   const slotW = (w - padL) / Math.max(data.length, 1);

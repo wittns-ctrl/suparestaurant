@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import { CalendarCheck, Plus, Calendar, Clock, MapPin, ChevronRight } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';

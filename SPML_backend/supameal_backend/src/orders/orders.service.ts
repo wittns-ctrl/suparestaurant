@@ -127,10 +127,7 @@ export class OrdersService {
       throw new BadRequestException('Please choose a valid delivery time');
     }
 
-    const orderItems: { menuItemId: Types.ObjectId; name: string; qty: number; price: number }[] = [];
-    let subtotal = 0;
-
-    for (const item of dto.items) {
+    const validItems = dto.items.map((item) => {
       if (!item.menuItemId || !Types.ObjectId.isValid(item.menuItemId)) {
         throw new BadRequestException(`Invalid menu item id: ${item.menuItemId}`);
       }
@@ -138,8 +135,19 @@ export class OrdersService {
       if (!Number.isInteger(qty) || qty < 1 || qty > 100) {
         throw new BadRequestException('Item quantity must be between 1 and 100');
       }
-      const menuItem = await this.menuModel.findById(item.menuItemId);
-      if (!menuItem) throw new NotFoundException(`Menu item ${item.menuItemId} not found`);
+      return { id: new Types.ObjectId(item.menuItemId), qty };
+    });
+    // Fetch all cart items in one database round trip instead of one query per item.
+    const menuItems = await this.menuModel.find({
+      _id: { $in: validItems.map(({ id }) => id) },
+    }).exec();
+    const menuById = new Map(menuItems.map((menuItem) => [menuItem._id.toString(), menuItem]));
+    const orderItems: { menuItemId: Types.ObjectId; name: string; qty: number; price: number }[] = [];
+    let subtotal = 0;
+
+    for (const item of validItems) {
+      const menuItem = menuById.get(item.id.toString());
+      if (!menuItem) throw new NotFoundException(`Menu item ${item.id.toString()} not found`);
       if (!menuItem.isAvailable) {
         throw new BadRequestException(`${menuItem.name} is not available`);
       }
@@ -153,10 +161,10 @@ export class OrdersService {
       orderItems.push({
         menuItemId: menuItem._id,
         name: menuItem.name,
-        qty,
+        qty: item.qty,
         price: Number(menuItem.price),
       });
-      subtotal += Number(menuItem.price) * qty;
+      subtotal += Number(menuItem.price) * item.qty;
     }
 
     const discount = 0;
@@ -482,7 +490,7 @@ export class OrdersService {
     });
 
     // Live push to any open SSE tracking streams for this order
-    this.orderEvents.emit(id, status, updated.eta);
+    await this.orderEvents.emit(id, status, updated.eta);
 
     const formatted = this.formatOrder(updated);
     return refundWarning ? { ...formatted, warning: refundWarning } : formatted;

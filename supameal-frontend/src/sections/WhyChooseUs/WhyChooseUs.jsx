@@ -1,4 +1,3 @@
-import React from 'react';
 import { Store, Zap, Clock, HeadphonesIcon } from 'lucide-react';
 import './WhyChooseUs.css';
 

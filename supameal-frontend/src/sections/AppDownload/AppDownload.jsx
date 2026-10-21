@@ -1,4 +1,3 @@
-import React from 'react';
 import appMockup from '../../assets/images/app_mockup.png';
 import './AppDownload.css';
 

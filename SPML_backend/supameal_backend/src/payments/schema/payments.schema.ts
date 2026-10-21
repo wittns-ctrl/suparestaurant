@@ -39,3 +39,5 @@ export class payment {
 }
 
 export const paymentschema = SchemaFactory.createForClass(payment);
+
+paymentschema.index({ status: 1, updatedAt: -1, orderId: 1 });

@@ -37,6 +37,8 @@ services:
       # ── Required: set these in .env before running ──
       JWT_SECRET: ${JWT_SECRET:?Set JWT_SECRET in .env (32+ chars)}
       JWT_REFRESH: ${JWT_REFRESH:?Set JWT_REFRESH in .env (32+ chars)}
+      DEMO_ADMIN_EMAIL: ${DEMO_ADMIN_EMAIL:-}
+      DEMO_ADMIN_PASSWORD: ${DEMO_ADMIN_PASSWORD:-}
       FRONTEND_URL: ${FRONTEND_URL:-http://localhost:8080}
       CORS_ORIGINS: ${CORS_ORIGINS:-http://localhost:8080,http://localhost:5173}
       # ── Optional integrations ──
@@ -59,6 +61,14 @@ services:
       THROTTLE_LIMIT: ${THROTTLE_LIMIT:-100}
       SEED_DEMO_DATA: ${SEED_DEMO_DATA:-false}
       TRUST_PROXY: ${TRUST_PROXY:-1}
+      MONGO_MAX_POOL_SIZE: ${MONGO_MAX_POOL_SIZE:-50}
+      MONGO_MIN_POOL_SIZE: ${MONGO_MIN_POOL_SIZE:-2}
+      REDIS_URL: ${REDIS_URL:?Set REDIS_URL from Upstash Connect > TCP}
+      REDIS_KEY_PREFIX: ${REDIS_KEY_PREFIX:-supameal}
+      CLOUDINARY_CLOUD_NAME: ${CLOUDINARY_CLOUD_NAME:?Set CLOUDINARY_CLOUD_NAME}
+      CLOUDINARY_API_KEY: ${CLOUDINARY_API_KEY:?Set CLOUDINARY_API_KEY}
+      CLOUDINARY_API_SECRET: ${CLOUDINARY_API_SECRET:?Set CLOUDINARY_API_SECRET}
+      CLOUDINARY_FOLDER: ${CLOUDINARY_FOLDER:-supameal}
       UPLOAD_DIR: /app/uploads
     volumes:
       # Uploaded restaurant/menu images must survive container rebuilds
@@ -86,7 +96,8 @@ services:
     ports:
       - "8080:80"
     depends_on:
-      - api
+      api:
+        condition: service_healthy
 
 volumes:
   mongo_data:

@@ -1,4 +1,3 @@
-import React from 'react';
 import { Star, MapPin, Utensils } from 'lucide-react';
 import './RestaurantCard.css';
 

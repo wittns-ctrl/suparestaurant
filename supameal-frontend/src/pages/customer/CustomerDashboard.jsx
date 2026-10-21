@@ -1,7 +1,6 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { LayoutDashboard, CalendarCheck, UtensilsCrossed, User } from 'lucide-react';
-import { useAuth } from '../../context/AuthContext';
 import { useCart } from '../../context/CartContext';
 import DashboardLayout from '../../layouts/DashboardLayout/DashboardLayout';
 
@@ -55,7 +54,6 @@ const CustomerDashboard = () => {
     VALID_TABS.has(requestedTab) ? requestedTab : 'overview',
   );
   const [trackingOrderId, setTrackingOrderId] = useState('');
-  const { isAuthenticated } = useAuth();
   const { cartCount } = useCart();
 
   const sidebarWithBadges = customerSidebarConfig.map(item => {

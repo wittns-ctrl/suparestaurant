@@ -25,6 +25,40 @@ export class EnvVars {
   @IsString()
   MONGO_URI?: string;
 
+  @IsOptional()
+  @IsString()
+  REDIS_URL?: string;
+
+  @IsOptional()
+  @IsString()
+  REDIS_KEY_PREFIX?: string;
+
+  @IsOptional()
+  @IsString()
+  CLOUDINARY_CLOUD_NAME?: string;
+
+  @IsOptional()
+  @IsString()
+  CLOUDINARY_API_KEY?: string;
+
+  @IsOptional()
+  @IsString()
+  CLOUDINARY_API_SECRET?: string;
+
+  @IsOptional()
+  @IsString()
+  CLOUDINARY_FOLDER?: string;
+
+  @IsOptional()
+  @IsInt()
+  @Min(1)
+  MONGO_MAX_POOL_SIZE?: number;
+
+  @IsOptional()
+  @IsInt()
+  @Min(0)
+  MONGO_MIN_POOL_SIZE?: number;
+
   @IsString()
   @MinLength(32, { message: 'JWT_SECRET must be at least 32 characters in production' })
   JWT_SECRET!: string;
@@ -117,6 +151,12 @@ export function validateEnv(config: Record<string, unknown>): Record<string, unk
     }
     if (!config.MONGO_URI) {
       throw new Error('FATAL: MONGO_URI is required in production');
+    }
+    if (!String(config.REDIS_URL || '').startsWith('rediss://')) {
+      throw new Error('FATAL: a TLS REDIS_URL (rediss://) is required in production');
+    }
+    if (!config.CLOUDINARY_CLOUD_NAME || !config.CLOUDINARY_API_KEY || !config.CLOUDINARY_API_SECRET) {
+      throw new Error('FATAL: CLOUDINARY_CLOUD_NAME, CLOUDINARY_API_KEY and CLOUDINARY_API_SECRET are required in production');
     }
     if (String(config.JWT_SECRET).length < 32) {
       throw new Error('FATAL: JWT_SECRET must be at least 32 characters in production');
