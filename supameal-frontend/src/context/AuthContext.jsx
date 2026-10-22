@@ -126,7 +126,7 @@ export const AuthProvider = ({ children }) => {
   }, []);
 
   const getApiBaseUrl = useCallback(() => {
-    return (import.meta.env.VITE_API_URL || 'http://localhost:3000').replace(/\/$/, '');
+    return (import.meta.env.VITE_API_URL || 'http://localhost:3000').replace(/\/+$/, '');
   }, []);
 
   const loginWithGoogle = useCallback((options = {}) => {
