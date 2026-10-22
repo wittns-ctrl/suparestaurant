@@ -37,6 +37,7 @@ const ReservationsPage = lazy(() => import('./pages/customer/ReservationsPage'))
 const BookTablePage = lazy(() => import('./pages/customer/BookTableDash'));
 const FooterInfoPage = lazy(() => import('./pages/FooterInfoPage'));
 const NewsletterUnsubscribePage = lazy(() => import('./pages/NewsletterUnsubscribePage'));
+const HealthPage = lazy(() => import('./pages/HealthPage'));
 
 const RouteFallback = () => (
   <div
@@ -95,6 +96,9 @@ function AppRoutes() {
         <Route path="/restaurants/:id" element={<RestaurantDetail />} />
         <Route path="/company/:page" element={<FooterInfoPage />} />
         <Route path="/newsletter/unsubscribe/:token" element={<NewsletterUnsubscribePage />} />
+        <Route path="/health" element={<HealthPage />} />
+        <Route path="/health/live" element={<HealthPage />} />
+        <Route path="/health/ready" element={<HealthPage />} />
         <Route path="/account-blocked" element={<BlockedAccountPage />} />
         <Route path="/menu/:restaurantId" element={<MenuPage />} />
         <Route

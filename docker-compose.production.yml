@@ -1,0 +1,46 @@
+# Backend-only production image. MongoDB, Redis and uploads are external
+# managed services; no local database or placeholder credentials are used.
+# Set the variables from .env.production or your deployment secret manager.
+services:
+  api:
+    build:
+      context: ./SPML_backend/supameal_backend
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    init: true
+    ports:
+      - "${API_PORT:-3000}:3000"
+    environment:
+      NODE_ENV: production
+      PORT: 3000
+      MONGO_URI: ${MONGO_URI:?Set the production MongoDB Atlas URI}
+      MONGO_MAX_POOL_SIZE: ${MONGO_MAX_POOL_SIZE:-30}
+      MONGO_MIN_POOL_SIZE: ${MONGO_MIN_POOL_SIZE:-2}
+      JWT_SECRET: ${JWT_SECRET:?Set a unique production JWT secret (32+ chars)}
+      JWT_REFRESH: ${JWT_REFRESH:?Set a unique production refresh secret (32+ chars)}
+      FRONTEND_URL: ${FRONTEND_URL:?Set the deployed frontend HTTPS URL}
+      CORS_ORIGINS: ${CORS_ORIGINS:?Set comma-separated deployed frontend origins}
+      REDIS_URL: ${REDIS_URL:?Set the Upstash TLS URL (rediss://)}
+      REDIS_KEY_PREFIX: ${REDIS_KEY_PREFIX:-supameal}
+      CLOUDINARY_CLOUD_NAME: ${CLOUDINARY_CLOUD_NAME:?Set Cloudinary cloud name}
+      CLOUDINARY_API_KEY: ${CLOUDINARY_API_KEY:?Set Cloudinary API key}
+      CLOUDINARY_API_SECRET: ${CLOUDINARY_API_SECRET:?Set Cloudinary API secret}
+      CLOUDINARY_FOLDER: ${CLOUDINARY_FOLDER:-supameal}
+      PAYPAL_CLIENT_ID: ${PAYPAL_CLIENT_ID:?Set PayPal live client ID}
+      PAYPAL_CLIENT_SECRET: ${PAYPAL_CLIENT_SECRET:?Set PayPal live client secret}
+      PAYPAL_ENV: ${PAYPAL_ENV:?Set PAYPAL_ENV=live for production payments}
+      PAYPAL_CURRENCY: ${PAYPAL_CURRENCY:-USD}
+      SMTP_HOST: ${SMTP_HOST:-}
+      SMTP_PORT: ${SMTP_PORT:-587}
+      SMTP_USER: ${SMTP_USER:-}
+      SMTP_PASS: ${SMTP_PASS:-}
+      FROM_EMAIL: ${FROM_EMAIL:-}
+      SUPPORT_EMAIL: ${SUPPORT_EMAIL:-}
+      RESEND_API_KEY: ${RESEND_API_KEY:-}
+      GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID:-}
+      GOOGLE_CLIENT_SECRET: ${GOOGLE_CLIENT_SECRET:-}
+      GOOGLE_CALLBACK_URL: ${GOOGLE_CALLBACK_URL:-}
+      TRUST_PROXY: ${TRUST_PROXY:-1}
+      SEED_DEMO_DATA: "false"
+    security_opt:
+      - no-new-privileges:true
