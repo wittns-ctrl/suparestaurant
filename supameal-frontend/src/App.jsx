@@ -1,4 +1,4 @@
-import { Suspense, lazy } from 'react';
+import { Suspense, lazy, useEffect } from 'react';
 import { Routes, Route, Navigate, useNavigate, useLocation } from 'react-router-dom';
 import { ToastProvider } from './context/ToastContext';
 import { CartProvider } from './context/CartContext';
@@ -202,6 +202,24 @@ function AppRoutes() {
 }
 
 function App() {
+  useEffect(() => {
+    const preloadAuthRoutes = () => {
+      void Promise.allSettled([
+        import('./pages/auth/Login'),
+        import('./pages/auth/SignUp'),
+        import('./pages/owner/OwnerLogin'),
+      ]);
+    };
+
+    if ('requestIdleCallback' in window) {
+      const idleId = window.requestIdleCallback(preloadAuthRoutes, { timeout: 1500 });
+      return () => window.cancelIdleCallback(idleId);
+    }
+
+    const timeoutId = window.setTimeout(preloadAuthRoutes, 800);
+    return () => window.clearTimeout(timeoutId);
+  }, []);
+
   return (
     <ThemeProvider>
       <ToastProvider>
