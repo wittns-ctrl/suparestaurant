@@ -1,14 +1,39 @@
 import { useState, useRef, useEffect, useCallback } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { ShieldCheck, ArrowRight, RefreshCw, CheckCircle, AlertCircle } from 'lucide-react';
+import { useNavigate, useLocation, useSearchParams } from 'react-router-dom';
+import { ShieldCheck, ArrowRight, RefreshCw, CheckCircle, AlertCircle, Mail } from 'lucide-react';
 import AuthLayout from '../../layouts/AuthLayout';
 import Button from '../../components/Button/Button';
 import { useAuth } from '../../context/AuthContext';
+import { homeForUser } from '../../utils/auth';
 import './AuthForm.css';
 
 const RESEND_COOLDOWN = 60; // seconds
 
 const VerifyOtp = () => {
+  const [searchParams] = useSearchParams();
+  const location = useLocation();
+  const navigate = useNavigate();
+  const { verifyOtp, resendOtp } = useAuth();
+
+  const initialEmail = (
+    searchParams.get('email') ||
+    location.state?.email ||
+    localStorage.getItem('pendingVerificationEmail') ||
+    ''
+  ).trim();
+
+  const initialAccountType = (
+    searchParams.get('accountType') ||
+    searchParams.get('type') ||
+    location.state?.accountType ||
+    localStorage.getItem('pendingVerificationRealm') ||
+    'customer'
+  ).trim();
+
+  const [email, setEmail] = useState(initialEmail);
+  const [accountType] = useState(initialAccountType);
+  const [isEditingEmail, setIsEditingEmail] = useState(!initialEmail);
+
   const [otp, setOtp] = useState(['', '', '', '', '', '']);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
@@ -16,10 +41,13 @@ const VerifyOtp = () => {
   const [resendLoading, setResendLoading] = useState(false);
   const [countdown, setCountdown] = useState(0);
   const inputRefs = useRef([]);
-  const navigate = useNavigate();
-  const { verifyOtp, resendOtp } = useAuth();
-  const email = localStorage.getItem('pendingVerificationEmail') || '';
-  const accountType = localStorage.getItem('pendingVerificationRealm') || 'customer';
+
+  // Sync to localStorage whenever valid email is entered
+  useEffect(() => {
+    if (email.trim()) {
+      localStorage.setItem('pendingVerificationEmail', email.trim());
+    }
+  }, [email]);
 
   // Start countdown helper
   const startCountdown = useCallback(() => {
@@ -75,29 +103,47 @@ const VerifyOtp = () => {
       newOtp[i] = pasted[i] || '';
     }
     setOtp(newOtp);
-    // Focus the last filled input or the next empty one
     const lastIndex = Math.min(pasted.length, 5);
     inputRefs.current[lastIndex]?.focus();
   };
 
   const handleVerify = async (e) => {
     e.preventDefault();
+    const cleanEmail = email.trim();
+    if (!cleanEmail) {
+      setError('Please enter the email address for your account.');
+      setIsEditingEmail(true);
+      return;
+    }
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(cleanEmail)) {
+      setError('Please enter a valid email address.');
+      setIsEditingEmail(true);
+      return;
+    }
+
     const code = otp.join('');
     if (code.length !== 6) {
       setError('Please enter all 6 digits.');
       return;
     }
+
     setLoading(true);
     setError('');
     setSuccess('');
     try {
-      await verifyOtp(email, code, accountType);
-      setSuccess('Email verified! Redirecting...');
+      const res = await verifyOtp(cleanEmail, code, accountType);
+      setSuccess('Email verified! Redirecting to your dashboard...');
+
       localStorage.removeItem('pendingVerificationEmail');
       localStorage.removeItem('pendingVerificationRealm');
-      const redirect = localStorage.getItem('pendingVerificationRedirect');
+      const redirect = searchParams.get('redirect') || localStorage.getItem('pendingVerificationRedirect');
       localStorage.removeItem('pendingVerificationRedirect');
-      const destination = redirect || (accountType === 'owner' ? '/owner-login?status=pending' : '/customer/dashboard');
+
+      // Direct users to their respective dashboard based on their role
+      const targetUser = res?.user || { role: accountType, roles: [accountType] };
+      const dashboardPath = homeForUser(targetUser);
+      const destination = redirect || dashboardPath;
+
       setTimeout(() => navigate(destination, { replace: true }), 1200);
     } catch (err) {
       setError(err.message || 'Verification failed. Please try again.');
@@ -107,12 +153,19 @@ const VerifyOtp = () => {
   };
 
   const handleResend = async () => {
+    const cleanEmail = email.trim();
+    if (!cleanEmail) {
+      setError('Please enter your email address to receive a code.');
+      setIsEditingEmail(true);
+      return;
+    }
     if (countdown > 0 || resendLoading) return;
+
     setResendLoading(true);
     setError('');
     setSuccess('');
     try {
-      await resendOtp(email, accountType);
+      await resendOtp(cleanEmail, accountType);
       setSuccess('A new code has been sent! Check your email');
       setOtp(['', '', '', '', '', '']);
       inputRefs.current[0]?.focus();
@@ -136,7 +189,26 @@ const VerifyOtp = () => {
         <h3>Verify Email</h3>
         <p>
           We've sent a 6-digit code to{' '}
-          <strong style={{ color: 'var(--primary)' }}>{email || 'your email'}</strong>.
+          <strong style={{ color: 'var(--primary)' }}>{email || 'your email'}</strong>
+          {email && (
+            <button
+              type="button"
+              onClick={() => setIsEditingEmail((prev) => !prev)}
+              style={{
+                background: 'none',
+                border: 'none',
+                color: 'var(--primary)',
+                textDecoration: 'underline',
+                cursor: 'pointer',
+                fontSize: '0.82rem',
+                padding: 0,
+                marginLeft: '8px',
+              }}
+            >
+              {isEditingEmail ? '(Done)' : '(Change)'}
+            </button>
+          )}
+          .
           <br />
           <span style={{ fontSize: '0.82rem', opacity: 0.7 }}>
             If you don't see it, check your spam folder or resend below.
@@ -159,6 +231,30 @@ const VerifyOtp = () => {
       )}
 
       <form onSubmit={handleVerify} noValidate>
+        {/* Email input field if missing or if user clicked Change */}
+        {(!email || isEditingEmail) && (
+          <div className="auth-input-group" style={{ marginBottom: '1.25rem', textAlign: 'left' }}>
+            <label htmlFor="verify-email-field" style={{ color: 'var(--text-muted)', fontSize: '0.85rem' }}>
+              Account Email Address
+            </label>
+            <div className="auth-input-wrapper">
+              <Mail size={18} className="auth-input-icon" />
+              <input
+                id="verify-email-field"
+                type="email"
+                className="auth-input"
+                placeholder="Enter your email (e.g. name@example.com)"
+                value={email}
+                onChange={(e) => {
+                  setEmail(e.target.value);
+                  setError('');
+                }}
+                autoFocus={!email}
+              />
+            </div>
+          </div>
+        )}
+
         {/* OTP inputs */}
         <div className="otp-inputs" onPaste={handlePaste}>
           {otp.map((digit, index) => (
@@ -183,7 +279,7 @@ const VerifyOtp = () => {
           variant="primary"
           className="auth-submit-btn"
           type="submit"
-          disabled={loading || !allFilled}
+          disabled={loading || !allFilled || !email.trim()}
         >
           {loading ? 'Verifying...' : 'Verify Account'}
           {!loading && <ArrowRight size={18} style={{ marginLeft: '8px' }} />}
