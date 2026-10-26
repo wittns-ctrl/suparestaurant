@@ -113,7 +113,7 @@ const VerifyOtp = () => {
     setSuccess('');
     try {
       await resendOtp(email, accountType);
-      setSuccess('A new code has been sent! Check your email — or look in the server terminal if email delivery is unavailable.');
+      setSuccess('A new code has been sent! Check your email');
       setOtp(['', '', '', '', '', '']);
       inputRefs.current[0]?.focus();
       startCountdown();
