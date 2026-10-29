@@ -16,7 +16,7 @@ const WhyChooseUs = () => {
     {
       icon: Clock,
       title: 'Real-Time Availability',
-      description: 'Live updates for accurate and reliable bookings.'
+      description: 'Live updates for accurate ,safe and reliable bookings.'
     },
     {
       icon: HeadphonesIcon,

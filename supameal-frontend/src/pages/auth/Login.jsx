@@ -29,7 +29,10 @@ const Login = ({ accountType = 'customer' }) => {
   useEffect(() => {
     const oauthError = searchParams.get('error');
     if (oauthError) {
-      const message = decodeURIComponent(oauthError.replace(/\+/g, ' '));
+      // URLSearchParams.get() already percent-decodes (and maps "+" to a space).
+      // Decoding a second time threw a URIError for any message containing a
+      // literal "%", which blanked the whole login page.
+      const message = oauthError;
       if (isBlockedAccountError(message)) {
         navigate('/account-blocked', { replace: true });
         setError('');

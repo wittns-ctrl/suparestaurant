@@ -3,6 +3,18 @@ import { apiRequest, API_URL, ApiError, getAccessToken } from '../api/client';
 // Re-exported for consumers that build absolute URLs (SSE stream, image srcs)
 export { API_URL, ApiError };
 
+const dedupeRestaurants = (restaurants) => {
+  const seen = new Set();
+  return restaurants.filter((restaurant) => {
+    const identity = restaurant?.id || restaurant?._id || [restaurant?.name, restaurant?.address].filter(Boolean).join('|');
+    if (!identity) return true;
+    const key = String(identity);
+    if (seen.has(key)) return false;
+    seen.add(key);
+    return true;
+  });
+};
+
 // Auth
 export const authApi = {
   signup: (data) => apiRequest('/auth/customer/signup', { method: 'POST', body: JSON.stringify(data) }),
@@ -34,11 +46,11 @@ const buildQuery = (params = {}) => {
 export const restaurantsApi = {
   list: async (params = {}) => {
     const res = await apiRequest(`/restaurants${buildQuery(params)}`);
-    return Array.isArray(res) ? res : res?.data || [];
+    return dedupeRestaurants(Array.isArray(res) ? res : res?.data || []);
   },
   adminList: async (params = {}) => {
     const res = await apiRequest(`/restaurants/admin/all${buildQuery(params)}`);
-    return Array.isArray(res) ? res : res?.data || [];
+    return dedupeRestaurants(Array.isArray(res) ? res : res?.data || []);
   },
   get: (id) => apiRequest(`/restaurants/${id}`),
   getForOwner: (id) => apiRequest(`/restaurants/${id}/owner-view`),

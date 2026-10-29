@@ -73,22 +73,8 @@ const TopPicks = () => {
 
       <div className="marquee-container">
         <div className="marquee-track">
-          {/* First set of cards */}
           {restaurants.map((restaurant) => (
             <div key={`set1-${restaurant.id}`} className="marquee-item">
-              <RestaurantCard
-                name={restaurant.name}
-                location={restaurant.location}
-                rating={restaurant.rating}
-                reviews={restaurant.reviews}
-                priceLevel={restaurant.priceLevel}
-                image={restaurant.image}
-              />
-            </div>
-          ))}
-          {/* Second set of cards for seamless loop */}
-          {restaurants.map((restaurant) => (
-            <div key={`set2-${restaurant.id}`} className="marquee-item">
               <RestaurantCard
                 name={restaurant.name}
                 location={restaurant.location}

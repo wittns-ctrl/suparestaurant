@@ -126,7 +126,11 @@ export const AuthProvider = ({ children }) => {
   }, []);
 
   const getApiBaseUrl = useCallback(() => {
-    return (import.meta.env.VITE_API_URL || 'http://localhost:3000').replace(/\/+$/, '');
+    const configuredApiUrl = String(import.meta.env.VITE_API_URL || '').trim();
+    const defaultApiUrl = import.meta.env.PROD
+      ? (typeof window !== 'undefined' ? window.location.origin : '')
+      : 'http://localhost:3000';
+    return (configuredApiUrl || defaultApiUrl).replace(/\/+$/, '');
   }, []);
 
   const loginWithGoogle = useCallback((options = {}) => {

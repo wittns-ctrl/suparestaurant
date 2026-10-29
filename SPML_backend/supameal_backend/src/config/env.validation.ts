@@ -113,6 +113,22 @@ export class EnvVars {
   CORS_ORIGINS?: string;
 
   @IsOptional()
+  @IsIn(['lax', 'strict', 'none'])
+  COOKIE_SAME_SITE?: string;
+
+  @IsOptional()
+  @IsString()
+  GOOGLE_CLIENT_ID?: string;
+
+  @IsOptional()
+  @IsString()
+  GOOGLE_CLIENT_SECRET?: string;
+
+  @IsOptional()
+  @IsString()
+  GOOGLE_CALLBACK_URL?: string;
+
+  @IsOptional()
   @IsString()
   PAYPAL_CLIENT_ID?: string;
 
@@ -196,6 +212,33 @@ export function validateEnv(
         'FATAL: CLOUDINARY_CLOUD_NAME, CLOUDINARY_API_KEY and CLOUDINARY_API_SECRET are required in production',
       );
     }
+    if (
+      !config.FRONTEND_URL ||
+      !/^https:\/\//i.test(String(config.FRONTEND_URL))
+    ) {
+      throw new Error(
+        'FATAL: FRONTEND_URL must be the deployed HTTPS frontend URL in production',
+      );
+    }
+    if (!config.CORS_ORIGINS) {
+      throw new Error(
+        'FATAL: CORS_ORIGINS must contain the deployed frontend origin in production',
+      );
+    }
+    if (
+      !config.GOOGLE_CLIENT_ID ||
+      !config.GOOGLE_CLIENT_SECRET ||
+      !config.GOOGLE_CALLBACK_URL
+    ) {
+      throw new Error(
+        'FATAL: GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET and GOOGLE_CALLBACK_URL are required in production',
+      );
+    }
+    if (!/^https:\/\//i.test(String(config.GOOGLE_CALLBACK_URL))) {
+      throw new Error(
+        'FATAL: GOOGLE_CALLBACK_URL must use HTTPS in production',
+      );
+    }
     if (String(config.JWT_SECRET).length < 32) {
       throw new Error(
         'FATAL: JWT_SECRET must be at least 32 characters in production',
@@ -208,6 +251,14 @@ export function validateEnv(
     }
     if (/dev-only-insecure/.test(String(config.JWT_SECRET))) {
       throw new Error('FATAL: dev fallback JWT_SECRET detected in production');
+    }
+    if (/dev-only-insecure/.test(String(config.JWT_REFRESH))) {
+      throw new Error('FATAL: dev fallback JWT_REFRESH detected in production');
+    }
+    // Sharing one secret lets a stolen access token be replayed as a refresh
+    // token (and vice versa), defeating the point of two token types.
+    if (config.JWT_SECRET === config.JWT_REFRESH) {
+      throw new Error('FATAL: JWT_SECRET and JWT_REFRESH must be different');
     }
   }
 

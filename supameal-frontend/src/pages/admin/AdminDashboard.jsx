@@ -79,16 +79,17 @@ const DonutChart = ({ segments }) => {
   if (!total) {
     return <div style={{ width: 180, height: 180, flexShrink: 0, display: 'grid', placeItems: 'center', color: 'var(--text-muted)', fontSize: '0.85rem' }}>No data yet</div>;
   }
-  let cumulative = 0;
   const r = 70, cx = 90, cy = 90, stroke = 22;
   const circumference = 2 * Math.PI * r;
+  // Running total before each segment, computed without mutating a variable
+  // during render (keeps the component pure / compiler-safe).
+  const startValues = segments.map((_, i) => segments.slice(0, i).reduce((sum, s) => sum + s.value, 0));
   return (
     <svg viewBox="0 0 180 180" style={{ width: 180, height: 180, flexShrink: 0 }}>
       {segments.map((seg, i) => {
         const pct = seg.value / total;
         const offset = circumference - pct * circumference;
-        const rotation = (cumulative / total) * 360 - 90;
-        cumulative += seg.value;
+        const rotation = (startValues[i] / total) * 360 - 90;
         return (
           <circle key={i} cx={cx} cy={cy} r={r}
             fill="none" stroke={seg.color} strokeWidth={stroke}

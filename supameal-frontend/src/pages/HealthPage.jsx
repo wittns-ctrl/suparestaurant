@@ -14,7 +14,10 @@ import {
 import { Link } from 'react-router-dom';
 import './HealthPage.css';
 
-const API_URL = (import.meta.env.VITE_API_URL || 'http://localhost:3000').replace(/\/$/, '');
+const configuredApiUrl = String(import.meta.env.VITE_API_URL || '').trim();
+const API_URL = (configuredApiUrl || (import.meta.env.PROD
+  ? (typeof window !== 'undefined' ? window.location.origin : '')
+  : 'http://localhost:3000')).replace(/\/+$/, '');
 
 const initialHealth = {
   live: 'checking',

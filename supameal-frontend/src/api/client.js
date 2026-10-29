@@ -1,4 +1,10 @@
-const API_URL = (import.meta.env.VITE_API_URL || 'http://localhost:3000').replace(/\/+$/, '');
+// VITE_API_URL is injected at build time. Avoid sending production users to a
+// developer's localhost when the variable is accidentally omitted.
+const configuredApiUrl = String(import.meta.env.VITE_API_URL || '').trim();
+const defaultApiUrl = import.meta.env.PROD
+  ? (typeof window !== 'undefined' ? window.location.origin : '')
+  : 'http://localhost:3000';
+const API_URL = (configuredApiUrl || defaultApiUrl).replace(/\/+$/, '');
 
 const DEFAULT_TIMEOUT_MS = 30000;
 

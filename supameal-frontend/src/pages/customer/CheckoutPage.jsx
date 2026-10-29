@@ -19,7 +19,7 @@ const validateDeliveryAddress = (address) => {
   const phone = address.phone.trim();
   const phoneDigits = phone.replace(/\D/g, '');
 
-  if (street.length < 2 || street.length > 200 || !/^[\p{L}\p{N}][\p{L}\p{N}\s,.'#+\/-]{1,199}$/u.test(street)) {
+  if (street.length < 2 || street.length > 200 || !/^[\p{L}\p{N}][\p{L}\p{N}\s,.'#+/-]{1,199}$/u.test(street)) {
     errors.street = 'Enter a valid street address.';
   }
   if (apartment.length > 50) errors.apartment = 'Apartment or suite must be 50 characters or fewer.';
