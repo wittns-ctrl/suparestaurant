@@ -115,3 +115,50 @@ describe('OrdersService.create', () => {
     ).resolves.toMatchObject({ status: 'pending' });
   });
 });
+
+describe('OrdersService.updateStatus payment guard', () => {
+  function buildForStatus(paid: boolean) {
+    const orderId = new Types.ObjectId();
+    const populated: Record<string, any> = {
+      _id: orderId,
+      status: 'pending',
+      timeline: [],
+      restaurantId: {
+        _id: RESTAURANT_ID,
+        ownerId: { toString: () => 'owner-1' },
+      },
+      customerId: { _id: { toString: () => CUSTOMER_ID } },
+    };
+    const orderModel = {
+      findById: jest.fn(() => query(populated)),
+      findOneAndUpdate: jest.fn(),
+    };
+    const paymentModel = {
+      exists: jest.fn().mockResolvedValue(paid ? { _id: 1 } : null),
+    };
+    const service = new OrdersService(
+      orderModel as never,
+      {} as never,
+      {} as never,
+      paymentModel as never,
+      {} as never,
+      {} as never,
+      {} as never,
+      {} as never,
+    );
+    return { service, orderModel, orderId };
+  }
+
+  it('refuses to accept an order that was never paid', async () => {
+    const { service, orderModel, orderId } = buildForStatus(false);
+    await expect(
+      service.updateStatus(
+        orderId.toString(),
+        'accepted' as never,
+        'owner-1',
+        'owner',
+      ),
+    ).rejects.toBeInstanceOf(BadRequestException);
+    expect(orderModel.findOneAndUpdate).not.toHaveBeenCalled();
+  });
+});

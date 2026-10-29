@@ -44,7 +44,9 @@ export const CartProvider = ({ children }) => {
     if (!restaurantId) return;
     setLoadingMenu(true);
     try {
-      const res = await menusApi.list(restaurantId);
+      // The API defaults to 50 rows when no limit is sent, which silently
+      // dropped menu items (and cart lines pointing at them) for larger menus.
+      const res = await menusApi.list(restaurantId, { limit: 100 });
       const items = Array.isArray(res) ? res : res?.data || [];
       setMenuItems(items);
       setSelectedRestaurantId(restaurantId);

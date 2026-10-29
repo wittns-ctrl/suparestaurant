@@ -40,7 +40,9 @@ export class bookings {
     index: true,
   })
   status!: reviewsEnums;
-  @Prop({ required: true })
+  // Optional free text. `required: true` made Mongoose reject the empty string
+  // the web app sends by default, so bookings without a note could not be made.
+  @Prop({ default: '' })
   specialRequest!: string;
   @Prop()
   ownerNote?: string;

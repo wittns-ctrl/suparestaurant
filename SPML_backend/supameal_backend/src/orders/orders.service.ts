@@ -509,6 +509,21 @@ export class OrdersService {
       );
     }
 
+    // Payment is captured before the restaurant starts work. Without this, an
+    // order whose PayPal approval was abandoned could still be accepted,
+    // prepared and delivered for free.
+    if (status === OrderStatus.ACCEPTED && populated.status !== status) {
+      const paid = await this.paymentModel.exists({
+        orderId: populated._id,
+        status: Payments.PAID,
+      });
+      if (!paid) {
+        throw new BadRequestException(
+          'This order has not been paid yet, so it cannot be accepted',
+        );
+      }
+    }
+
     const timeline = this.buildTimelineForStatus(status, populated.timeline);
     // Optimistic concurrency: the update only matches if the status is still
     // what we validated above — two concurrent transitions can't both win.

@@ -13,7 +13,10 @@ import { NewsletterUpdateDto } from './dto/newsletter-update.dto';
 export class MailController {
   constructor(private readonly mailService: MailService) {}
 
+  // Public endpoint that sends real email — keep it tight so it can't be used
+  // to flood the support inbox.
   @Post('contact')
+  @Throttle({ default: { limit: 5, ttl: 60_000 } })
   async contact(@Body() dto: CreateMailDto) {
     await this.mailService.sendContactEmail(dto);
     return { message: 'Message sent successfully' };
