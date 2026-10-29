@@ -1,6 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport';
-import { Strategy, VerifyCallback } from 'passport-google-oauth20';
+import { Strategy } from 'passport-google-oauth20';
 import { ConfigService } from '@nestjs/config';
 import { AuthService } from '../auth.service';
 
@@ -37,12 +37,18 @@ export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
     }
   }
 
+  /**
+   * Nest's PassportStrategy wrapper awaits this method and then calls passport's
+   * `done` itself with whatever is returned (or with the thrown error). Do NOT
+   * call `done` in here as well: that invoked the verify callback twice, the
+   * second call tried to redirect an already-answered response, and the
+   * resulting unhandled rejection took the whole server down.
+   */
   async validate(
-    accessToken: string,
-    refreshToken: string,
+    _accessToken: string,
+    _refreshToken: string,
     profile: any,
-    done: VerifyCallback,
-  ): Promise<any> {
+  ): Promise<unknown> {
     const { name, emails, photos } = profile;
     const email = emails?.[0]?.value;
     // Google returns a boolean, but older userinfo versions returned "true".
@@ -52,25 +58,22 @@ export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
       `${name?.givenName || ''} ${name?.familyName || ''}`.trim();
     const imageurl = photos?.[0]?.value;
 
+    if (!email || !emailVerified) {
+      throw new Error('Google did not provide a verified email address');
+    }
     try {
-      if (!email || !emailVerified) {
-        throw new Error('Google did not provide a verified email address');
-      }
-      const result = await this.authService.oauthSignIn({
+      return await this.authService.oauthSignIn({
         email,
         name: displayName,
         imageurl,
         provider: 'google',
         providerId: profile.id,
       });
-      done(null, result);
     } catch (err) {
       const message = err instanceof Error ? err.message : String(err);
-      if (/ACCOUNT_BLOCKED/i.test(message)) {
-        done(null, { authError: message });
-      } else {
-        done(err as Error, false);
-      }
+      // A blocked account is a normal outcome, shown to the user on the login page.
+      if (/ACCOUNT_BLOCKED/i.test(message)) return { authError: message };
+      throw err;
     }
   }
 }

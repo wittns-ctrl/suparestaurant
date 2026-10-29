@@ -493,6 +493,7 @@ export class AuthController {
       'google',
       { session: false },
       (err: any, user: any) => {
+        if (res.headersSent) return;
         if (err || !user) {
           this.logger.warn('Google OAuth callback failed', err);
           return res.redirect(
@@ -572,6 +573,8 @@ export class AuthController {
     errorPage = '/login',
   ) {
     const redirectBase = frontendUrl();
+    // Never answer the same request twice (a second redirect throws).
+    if (res.headersSent) return;
     try {
       if (result?.authError) {
         return res.redirect(
@@ -597,6 +600,7 @@ export class AuthController {
         `${redirectBase}/auth/callback?code=${encodeURIComponent(code)}`,
       );
     } catch {
+      if (res.headersSent) return;
       return res.redirect(`${redirectBase}${errorPage}?error=OAuth+failed`);
     }
   }

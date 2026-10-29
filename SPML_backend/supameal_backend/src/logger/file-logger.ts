@@ -33,9 +33,13 @@ export class FileLogger extends ConsoleLogger {
       FileLogger.writeToFile('FATAL', 'Process', format(err));
       process.exit(1);
     });
+    // A rejected promise belongs to one request/operation, not to the whole
+    // process. Exiting here turned a single failed OAuth callback into a full
+    // outage (every user got a 502 until Render restarted the instance), so
+    // record it and keep serving. Truly uncaught exceptions still exit above.
     process.on('unhandledRejection', (reason: unknown) => {
-      FileLogger.writeToFile('FATAL', 'Process', format(reason));
-      process.exit(1);
+      FileLogger.writeToFile('ERROR', 'UnhandledRejection', format(reason));
+      console.error('[UnhandledRejection]', reason);
     });
   }
 
