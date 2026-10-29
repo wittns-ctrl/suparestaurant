@@ -1,0 +1,11 @@
+{
+  "name": "spml_backend_wrapper",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "start": "npm --prefix supameal_backend run start",
+    "start:dev": "npm --prefix supameal_backend run start:dev",
+    "build": "npm --prefix supameal_backend run build",
+    "test": "npm --prefix supameal_backend run test"
+  }
+}
