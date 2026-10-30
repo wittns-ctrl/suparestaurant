@@ -1,4 +1,4 @@
-import appMockup from '../../assets/images/app_mockup.png';
+import appMockup from '../../assets/images/app_mockup.webp';
 import './AppDownload.css';
 
 const AppDownload = () => {

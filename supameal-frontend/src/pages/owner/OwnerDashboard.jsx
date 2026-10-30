@@ -9,7 +9,7 @@ import {
   CheckCircle, AlertCircle, Star, DollarSign
 } from 'lucide-react';
 import '../customer/dashboard.css';
-import promoPasta from '../../assets/images/promo_pasta.png';
+import promoPasta from '../../assets/images/promo_pasta.webp';
 
 // ── Sidebar Config ─────────────────────────────────────────────────────────
 const ownerSidebarConfig = [

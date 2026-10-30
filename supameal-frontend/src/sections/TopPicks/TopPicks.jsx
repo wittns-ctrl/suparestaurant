@@ -1,11 +1,11 @@
 import { Link } from 'react-router-dom';
 import RestaurantCard from '../../components/RestaurantCard/RestaurantCard';
 import Button from '../../components/Button/Button';
-import restaurant1 from '../../assets/images/restaurant_interior.png';
-import restaurant2 from '../../assets/images/restaurant_2.png';
-import restaurant3 from '../../assets/images/restaurant_3.png';
-import restaurant4 from '../../assets/images/hero_food.png';
-import restaurant5 from '../../assets/images/promo_pasta.png';
+import restaurant1 from '../../assets/images/restaurant_interior.webp';
+import restaurant2 from '../../assets/images/restaurant_2.webp';
+import restaurant3 from '../../assets/images/restaurant_3.webp';
+import restaurant4 from '../../assets/images/hero_food.webp';
+import restaurant5 from '../../assets/images/promo_pasta.webp';
 import './TopPicks.css';
 
 // Copies of the card set in the track. The animation shifts by exactly one

@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 import { Mail, ArrowLeft, CheckCircle } from "lucide-react";
 import AuthLayout from "../layouts/AuthLayout";
 import { authApi } from "../services/api";
-import img1 from "../assets/images/restaurant_interior.png";
+import img1 from "../assets/images/restaurant_interior.webp";
 import "./auth.css";
 
 export default function ForgotPassword() {

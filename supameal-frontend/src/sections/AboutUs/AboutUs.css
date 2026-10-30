@@ -45,7 +45,7 @@
   width: 80%;
   height: 80%;
   border-radius: var(--radius-lg);
-  background-image: url('../../assets/images/restaurant_interior.png');
+  background-image: url('../../assets/images/restaurant_interior.webp');
   background-size: cover;
   background-position: center;
   box-shadow: none;
@@ -58,7 +58,7 @@
   width: 60%;
   height: 60%;
   border-radius: var(--radius-lg);
-  background-image: url('../../assets/images/hero_food.png');
+  background-image: url('../../assets/images/hero_food.webp');
   background-size: cover;
   background-position: center;
   border: 0;

@@ -2,7 +2,7 @@ import { Link } from 'react-router-dom';
 import Logo from '../components/Logo/Logo';
 import { ArrowLeft } from 'lucide-react';
 import './AuthLayout.css';
-import bgImage from '../assets/images/hero_food.png';
+import bgImage from '../assets/images/hero_food.webp';
 
 const AuthLayout = ({ children, title, subtitle, className = '', backTo = '/' }) => {
   return (
