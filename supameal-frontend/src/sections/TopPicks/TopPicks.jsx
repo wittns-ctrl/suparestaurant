@@ -8,6 +8,11 @@ import restaurant4 from '../../assets/images/hero_food.png';
 import restaurant5 from '../../assets/images/promo_pasta.png';
 import './TopPicks.css';
 
+// Copies of the card set in the track. The animation shifts by exactly one
+// copy (1/MARQUEE_COPIES of the track), so keep this in sync with the
+// `translateX(-25%)` keyframe in TopPicks.css.
+const MARQUEE_COPIES = 4;
+
 const TopPicks = () => {
   const restaurants = [
     {
@@ -71,18 +76,29 @@ const TopPicks = () => {
         </div>
       </div>
 
+      {/* Auto-scrolling marquee. The card set is repeated so the loop is
+          seamless on any screen width; only the first copy is exposed to
+          assistive tech so screen readers don't hear every restaurant 4x. */}
       <div className="marquee-container">
         <div className="marquee-track">
-          {restaurants.map((restaurant) => (
-            <div key={`set1-${restaurant.id}`} className="marquee-item">
-              <RestaurantCard
-                name={restaurant.name}
-                location={restaurant.location}
-                rating={restaurant.rating}
-                reviews={restaurant.reviews}
-                priceLevel={restaurant.priceLevel}
-                image={restaurant.image}
-              />
+          {Array.from({ length: MARQUEE_COPIES }, (_, copy) => (
+            <div
+              key={`set-${copy}`}
+              className="marquee-group"
+              aria-hidden={copy === 0 ? undefined : 'true'}
+            >
+              {restaurants.map((restaurant) => (
+                <div key={`${copy}-${restaurant.id}`} className="marquee-item">
+                  <RestaurantCard
+                    name={restaurant.name}
+                    location={restaurant.location}
+                    rating={restaurant.rating}
+                    reviews={restaurant.reviews}
+                    priceLevel={restaurant.priceLevel}
+                    image={restaurant.image}
+                  />
+                </div>
+              ))}
             </div>
           ))}
         </div>

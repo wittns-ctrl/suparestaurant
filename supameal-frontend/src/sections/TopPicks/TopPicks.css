@@ -12,22 +12,60 @@
 
 .marquee-container {
   width: 100%;
-  overflow-x: auto;
-  overflow-y: hidden;
+  overflow: hidden; /* no scrollbar: the row moves on its own */
   position: relative;
+  /* soft fade at both edges so cards glide in and out */
+  -webkit-mask-image: linear-gradient(to right, transparent, #000 5%, #000 95%, transparent);
+  mask-image: linear-gradient(to right, transparent, #000 5%, #000 95%, transparent);
 }
 
 .marquee-track {
   display: flex;
   width: max-content;
-  gap: 1.5rem;
-  animation: none;
   padding: 1rem 0;
+  animation: marquee-scroll 55s linear infinite;
+  will-change: transform;
+}
+
+/* Hovering or focusing a card pauses the row so it can be read/clicked. */
+.marquee-container:hover .marquee-track,
+.marquee-container:focus-within .marquee-track {
+  animation-play-state: paused;
+}
+
+.marquee-group {
+  display: flex;
+  flex-shrink: 0;
+  gap: 1.5rem;
+  padding-right: 1.5rem; /* keeps the gap between copies identical to the gap between cards */
 }
 
 .marquee-item {
   width: 320px; /* Fixed width for consistent scrolling */
   flex-shrink: 0;
+}
+
+/* Move left by exactly one copy of the cards (1 of 4 copies = 25%). */
+@keyframes marquee-scroll {
+  from { transform: translateX(0); }
+  to { transform: translateX(-25%); }
+}
+
+/* People who ask their OS for less motion get a calm, manually scrollable row. */
+@media (prefers-reduced-motion: reduce) {
+  .marquee-container {
+    overflow-x: auto;
+    -webkit-mask-image: none;
+    mask-image: none;
+  }
+
+  .marquee-track {
+    animation: none;
+  }
+
+  .marquee-group[aria-hidden='true'] {
+    display: none;
+  }
 }
 
 /* Keep the price level easy to spot on the moving restaurant cards. */
