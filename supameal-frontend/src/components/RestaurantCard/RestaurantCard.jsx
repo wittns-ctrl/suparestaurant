@@ -1,4 +1,5 @@
 import { Star, MapPin, Utensils } from 'lucide-react';
+import SmartImage from '../SmartImage/SmartImage';
 import './RestaurantCard.css';
 
 const RestaurantCard = ({ image, name, location, rating, reviews, priceLevel }) => {
@@ -6,7 +7,7 @@ const RestaurantCard = ({ image, name, location, rating, reviews, priceLevel }) 
     <div className="restaurant-card">
       <div className="card-image-wrapper">
         {image ? (
-          <img src={image} alt={name} className="card-image" />
+          <SmartImage src={image} alt={name} className="card-image" width={480} />
         ) : (
           <div className="card-image-placeholder" aria-label={`${name} has no restaurant photo`}>
             <Utensils size={34} />

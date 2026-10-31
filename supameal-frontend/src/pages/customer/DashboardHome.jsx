@@ -1,3 +1,4 @@
+import SmartImage from '../../components/SmartImage/SmartImage';
 import { useState, useEffect } from 'react';
 import { Package, CalendarCheck, Heart, TrendingUp, Clock, Star, Utensils } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
@@ -167,7 +168,7 @@ const DashboardHome = ({ setActiveTab }) => {
             {favoriteRestaurants.map((r, i) => (
               <div key={r.id || i} className="fav-card" onClick={() => setActiveTab('favorites')} style={{ borderRadius: 12, overflow: 'hidden', border: '1px solid var(--border-color, rgba(255,255,255,0.06))', cursor:'pointer' }}>
                 {resolveImageUrl(r.image) ? (
-                  <img src={resolveImageUrl(r.image)} alt={r.name} style={{ width:'100%', height:'110px', objectFit:'cover' }} />
+                  <SmartImage src={resolveImageUrl(r.image)} alt={r.name} width={320} style={{ width:'100%', height:'110px', objectFit:'cover' }} />
                 ) : (
                   <div aria-label={`${r.name} has no restaurant photo`} style={{ width:'100%', height:'110px', display:'grid', placeItems:'center', background:'var(--dash-border, #222)', color:'var(--text-muted)' }}>
                     <Utensils size={24} />

@@ -1,3 +1,4 @@
+import SmartImage from '../../components/SmartImage/SmartImage';
 import { useState, useEffect, useRef } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import { restaurantsApi, bookingsApi, ordersApi, menusApi, uploadsApi, usersApi, resolveImageUrl } from '../../services/api';
@@ -492,7 +493,7 @@ const RestaurantProfile = ({ showToast, restaurantId, setActiveTab }) => {
             <h3 style={{ marginBottom: '1rem' }}>Cover Photo</h3>
             <div style={{ position: 'relative', width: '100%', height: 160, borderRadius: '12px', overflow: 'hidden', marginBottom: '0.75rem' }}>
               {cover ? (
-                <img src={cover} alt="Restaurant" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                <SmartImage src={cover} alt="Restaurant" width={640} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
               ) : (
                 <div style={{ width: '100%', height: '100%', display: 'grid', placeItems: 'center', background: 'var(--dash-border, #222)', color: 'var(--text-muted)' }}>
                   <Camera size={28} />
@@ -585,7 +586,7 @@ const Gallery = ({ showToast, restaurantId }) => {
               const src = resolveImageUrl(photo);
               return (
                 <div key={photo} style={{ position: 'relative', borderRadius: '12px', overflow: 'hidden', aspectRatio: '4/3' }}>
-                  {src && <img src={src} alt={`Gallery ${i + 1}`} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />}
+                  {src && <SmartImage src={src} alt={`Gallery ${i + 1}`} width={480} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />}
                   <div style={{
                     position: 'absolute', inset: 0, background: 'rgba(0,0,0,0)', transition: 'background 0.2s',
                     display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem',
@@ -712,7 +713,7 @@ const MenuManagement = ({ showToast, restaurantId }) => {
               onMouseEnter={e => e.currentTarget.style.borderColor = 'rgba(215,138,38,0.3)'}
               onMouseLeave={e => e.currentTarget.style.borderColor = 'rgba(255,255,255,0.08)'}>
               <div style={{ height: 140, overflow: 'hidden', position: 'relative' }}>
-                <img src={item.img} alt={item.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                <SmartImage src={item.img} alt={item.name} width={480} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                 {!item.available && (
                   <div style={{ position: 'absolute', inset: 0, background: 'rgba(0,0,0,0.65)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 700, fontSize: '0.9rem', letterSpacing: '0.05em' }}>
                     UNAVAILABLE

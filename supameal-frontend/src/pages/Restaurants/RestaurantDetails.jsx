@@ -1,3 +1,4 @@
+import { optimizeImageUrl } from '../../utils/images';
 import { useState, useEffect } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { ArrowLeft, Star, MapPin, Clock, Users, Phone, Navigation, Heart, ShoppingCart, Plus, Minus, Check } from 'lucide-react';
@@ -120,7 +121,7 @@ const RestaurantDetails = () => {
     <>
       <Navbar />
       <main className="restaurant-details-page">
-        <div className="restaurant-hero" style={restaurant.image ? { backgroundImage: `url(${restaurant.image})` } : undefined}>
+        <div className="restaurant-hero" style={restaurant.image ? { backgroundImage: `url(${optimizeImageUrl(restaurant.image, 1600)})` } : undefined}>
           <div className="restaurant-hero-overlay"></div>
           <div className="container restaurant-hero-content">
             <Link to="/restaurants" className="back-btn-glass">

@@ -1,3 +1,4 @@
+import SmartImage from '../../components/SmartImage/SmartImage';
 import { useEffect, useMemo, useState } from 'react';
 import { Link, useParams, useNavigate } from 'react-router-dom';
 import { Search, ShoppingCart, Filter, Package, Utensils } from 'lucide-react';
@@ -138,7 +139,7 @@ const MenuPage = ({ setActiveTab }) => {
           <div key={item.id} className="dash-panel" style={{ padding: '1.25rem', display: 'flex', flexDirection: 'column', marginBottom: 0, opacity: soldOut ? 0.6 : 1 }}>
             <div style={{ marginBottom: '0.75rem', textAlign: 'center', background: '#1a1a1a', borderRadius: 12, padding: '1rem' }}>
               {imgSrc ? (
-                <img src={imgSrc} alt={item.name} loading="lazy" style={{ width: '100%', height: 140, objectFit: 'cover', borderRadius: 8 }} />
+                <SmartImage src={imgSrc} alt={item.name} width={480} style={{ width: '100%', height: 140, objectFit: 'cover', borderRadius: 8 }} />
               ) : emoji ? (
                 <div style={{ height: 140, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '3.5rem' }}>{emoji}</div>
               ) : (

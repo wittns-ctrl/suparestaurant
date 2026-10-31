@@ -46,7 +46,7 @@ const AppDownload = () => {
         </div>
         
         <div className="app-image-wrapper">
-          <img src={appMockup} alt="SupaMeal App Mockup" className="app-mockup-image" />
+          <img src={appMockup} alt="SupaMeal App Mockup" className="app-mockup-image" loading="lazy" decoding="async" />
         </div>
       </div>
     </section>

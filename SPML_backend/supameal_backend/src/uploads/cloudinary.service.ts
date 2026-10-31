@@ -7,6 +7,9 @@ import { ConfigService } from '@nestjs/config';
 import { v2 as cloudinary } from 'cloudinary';
 import { Readable } from 'stream';
 
+// Longest side (px) an uploaded image is kept at.
+export const MAX_STORED_DIMENSION = 1920;
+
 export interface CloudinaryUpload {
   secure_url: string;
   public_id: string;
@@ -54,6 +57,17 @@ export class CloudinaryService {
           format,
           overwrite: false,
           unique_filename: false,
+          // Applied once, before the file is stored: phone photos are often
+          // 4000px+ and several MB, but nothing in the app shows them larger
+          // than ~1600px. `limit` only ever shrinks (never upscales).
+          transformation: [
+            {
+              width: MAX_STORED_DIMENSION,
+              height: MAX_STORED_DIMENSION,
+              crop: 'limit',
+              quality: 'auto:good',
+            },
+          ],
         },
         (error, result) => {
           if (error || !result?.secure_url || !result.public_id) {

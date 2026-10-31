@@ -1,3 +1,4 @@
+import SmartImage from '../../components/SmartImage/SmartImage';
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Heart, Star, ArrowRight, Utensils } from 'lucide-react';
@@ -49,7 +50,7 @@ const FavoritesPage = () => {
             >
               <div style={{ position: 'relative' }}>
                 {r.image ? (
-                  <img src={r.image} alt={r.name} style={{ width: '100%', height: 160, objectFit: 'cover' }} />
+                  <SmartImage src={r.image} alt={r.name} width={480} style={{ width: '100%', height: 160, objectFit: 'cover' }} />
                 ) : (
                   <div aria-label={`${r.name} has no restaurant photo`} style={{ width: '100%', height: 160, display: 'grid', placeItems: 'center', background: 'var(--bg-card)', color: 'var(--text-muted)' }}>
                     <Utensils size={32} />

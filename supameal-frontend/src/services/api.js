@@ -1,4 +1,5 @@
 import { apiRequest, API_URL, ApiError, getAccessToken } from '../api/client';
+import { optimizeImageUrl } from '../utils/images';
 
 // Re-exported for consumers that build absolute URLs (SSE stream, image srcs)
 export { API_URL, ApiError };
@@ -97,13 +98,14 @@ export const uploadsApi = {
 
 // Resolve a stored image reference to a browser-usable URL.
 // '/uploads/x.jpg' → API origin; http(s) passes through; '' → null.
-export function resolveImageUrl(url) {
+// Pass `width` (CSS px) to get a resized, auto-format version of Cloudinary photos.
+export function resolveImageUrl(url, width) {
   if (!url) return null;
   // Older profile uploads were stored as data URLs. Keep those photos visible
   // while new uploads use persistent /uploads paths.
   if (url.startsWith('data:image/')) return url;
   if (url.startsWith('/uploads/')) return `${API_URL}${url}`;
-  if (url.startsWith('http')) return url;
+  if (url.startsWith('http')) return width ? optimizeImageUrl(url, width) : url;
   return null;
 }
 
