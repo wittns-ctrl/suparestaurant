@@ -37,26 +37,47 @@ export function clientIpFrom(
   return { ip: String(ip ?? 'unknown'), source: 'express' };
 }
 
+/** Which forwarding headers a request carried (names and counts only). */
+export function forwardingShape(req: Record<string, any>): string {
+  const h = req?.headers ?? {};
+  const xff = String(h['x-forwarded-for'] ?? '')
+    .split(',')
+    .map((part) => part.trim())
+    .filter(Boolean);
+  return [
+    `cf-connecting-ip=${h['cf-connecting-ip'] ? 'yes' : 'no'}`,
+    `true-client-ip=${h['true-client-ip'] ? 'yes' : 'no'}`,
+    `x-forwarded-for entries=${xff.length}`,
+  ].join(', ');
+}
+
 @Injectable()
 export class ClientIpThrottlerGuard extends ThrottlerGuard {
   private readonly ipLogger = new Logger('RateLimit');
-  private reported = false;
+  private reportedVisitorIp = false;
+  private reportedFallback = false;
 
   protected async getTracker(req: Record<string, any>): Promise<string> {
     const { ip, source } = clientIpFrom(req);
-    if (!this.reported) {
-      // One line on the first request so the deployment can be checked from
-      // the logs. The address itself is never logged.
-      this.reported = true;
-      if (source === 'cf-connecting-ip') {
-        this.ipLogger.log(
-          'Rate limits are keyed on the visitor IP from CF-Connecting-IP.',
-        );
-      } else if (shouldTrustCfConnectingIp()) {
-        this.ipLogger.warn(
-          'CF-Connecting-IP was expected but missing; rate limits fall back to the proxy address.',
-        );
-      }
+    // At most two log lines per process, so the deployment can be checked from
+    // the logs. Addresses themselves are never logged.
+    if (source === 'cf-connecting-ip' && !this.reportedVisitorIp) {
+      this.reportedVisitorIp = true;
+      this.ipLogger.log(
+        'Rate limits are keyed on the visitor IP from CF-Connecting-IP.',
+      );
+    } else if (
+      source === 'express' &&
+      shouldTrustCfConnectingIp() &&
+      !this.reportedFallback &&
+      !String(req?.url ?? '').startsWith('/health')
+    ) {
+      // Internal health checks never pass through Cloudflare; only report
+      // real traffic that arrives without the header.
+      this.reportedFallback = true;
+      this.ipLogger.warn(
+        `A request arrived without CF-Connecting-IP (${String(req?.url ?? '').split('?')[0]}; ${forwardingShape(req)}); it was keyed on the proxy address.`,
+      );
     }
     return ip;
   }
