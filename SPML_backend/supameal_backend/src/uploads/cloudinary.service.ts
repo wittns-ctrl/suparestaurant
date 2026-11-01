@@ -114,6 +114,15 @@ export class CloudinaryService {
     return result.result === 'ok';
   }
 
+  /** True when the asset lives in the uploader's own namespace. */
+  isOwnedBy(publicId: string, userId: string): boolean {
+    return (
+      /^[a-f0-9]{24}$/i.test(String(userId)) &&
+      this.isManagedAsset(publicId) &&
+      publicId.startsWith(`${this.folder}/${userId}/`)
+    );
+  }
+
   isManagedAsset(publicId: string): boolean {
     const expectedPrefix = `${this.folder}/`;
     return (

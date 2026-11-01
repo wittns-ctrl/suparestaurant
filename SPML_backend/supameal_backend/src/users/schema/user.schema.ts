@@ -158,6 +158,12 @@ export class User {
     default: [],
   })
   favorites!: Types.ObjectId[];
+  // Set when the email is changed from the profile page. Until the new address
+  // is proven (a password reset sent to it), it must not be trusted for Google
+  // sign-in: otherwise anyone could put a victim's address on their own
+  // account and the victim's Google login would land in that account.
+  @Prop({ default: false })
+  emailUnconfirmed?: boolean;
   // OAuth fields
   @Prop()
   oauthProvider?: string;

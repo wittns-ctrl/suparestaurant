@@ -1,3 +1,4 @@
+import { IsTrustedImageRef } from 'src/common/validators/trusted-image.validator';
 import {
   IsBoolean,
   IsMongoId,
@@ -24,8 +25,10 @@ export class CreateMenuDto {
   @IsString()
   category!: string;
 
+  // An uploaded photo, or a short emoji placeholder such as "🍽️"
   @IsOptional()
   @IsString()
+  @IsTrustedImageRef({ allowEmoji: true })
   image?: string;
 
   @IsOptional()

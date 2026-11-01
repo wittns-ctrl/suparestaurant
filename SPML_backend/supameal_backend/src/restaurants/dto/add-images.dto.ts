@@ -3,9 +3,9 @@ import {
   ArrayMinSize,
   IsArray,
   IsString,
-  Matches,
   MaxLength,
 } from 'class-validator';
+import { IsTrustedImageRef } from 'src/common/validators/trusted-image.validator';
 
 export class AddImagesDto {
   @IsArray()
@@ -13,10 +13,7 @@ export class AddImagesDto {
   @ArrayMaxSize(10)
   @IsString({ each: true })
   @MaxLength(2048, { each: true })
-  // Accept local upload paths (/uploads/<uuid>.<ext>) or https URLs only
-  @Matches(/^(\/uploads\/[a-f0-9-]{36}\.(jpg|png|webp)|https:\/\/.+)$/, {
-    each: true,
-    message: 'each image must be an uploaded path (/uploads/…) or an https URL',
-  })
+  // Only images uploaded through SupaMeal (our Cloudinary account or /uploads)
+  @IsTrustedImageRef({}, { each: true })
   images!: string[];
 }

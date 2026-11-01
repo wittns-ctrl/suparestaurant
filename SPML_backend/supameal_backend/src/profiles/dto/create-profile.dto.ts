@@ -1,4 +1,5 @@
-import { IsOptional, IsString, IsUrl, MaxLength } from 'class-validator';
+import { IsOptional, IsString, MaxLength } from 'class-validator';
+import { IsTrustedImageRef } from 'src/common/validators/trusted-image.validator';
 
 export class CreateProfileDto {
   @IsOptional()
@@ -7,6 +8,7 @@ export class CreateProfileDto {
   bio?: string;
 
   @IsOptional()
-  @IsUrl({}, { message: 'imageurl must be a valid URL' })
+  @IsString()
+  @IsTrustedImageRef({ allowDataImage: true, allowGoogleAvatar: true })
   imageurl?: string;
 }

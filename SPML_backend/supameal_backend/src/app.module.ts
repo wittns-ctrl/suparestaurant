@@ -18,7 +18,8 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { MongooseModule } from '@nestjs/mongoose';
 import { JwtModule } from '@nestjs/jwt';
 import { MailModule } from './mail/mail.module';
-import { ThrottlerModule, ThrottlerGuard } from '@nestjs/throttler';
+import { ThrottlerModule } from '@nestjs/throttler';
+import { ClientIpThrottlerGuard } from './common/guards/client-ip-throttler.guard';
 import { APP_FILTER, APP_GUARD } from '@nestjs/core';
 import { MongoExceptionFilter } from './common/filters/mongo-exception.filter';
 import { validateEnv, isProductionEnv } from './config/env.validation';
@@ -68,9 +69,11 @@ import { RedisThrottlerStorage } from './redis/redis-throttler.storage';
         return {
           secret,
           signOptions: {
+            algorithm: 'HS256',
             expiresIn: (configService.get<string>('JWT_ACCESS_TTL') ||
               '15m') as any,
           },
+          verifyOptions: { algorithms: ['HS256'] },
         };
       },
     }),
@@ -108,7 +111,8 @@ import { RedisThrottlerStorage } from './redis/redis-throttler.storage';
     AppService,
     {
       provide: APP_GUARD,
-      useClass: ThrottlerGuard,
+      // Counts requests per real visitor (see ClientIpThrottlerGuard).
+      useClass: ClientIpThrottlerGuard,
     },
     {
       provide: APP_FILTER,

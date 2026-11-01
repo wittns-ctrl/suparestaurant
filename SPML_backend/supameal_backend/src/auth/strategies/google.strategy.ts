@@ -71,8 +71,10 @@ export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
       });
     } catch (err) {
       const message = err instanceof Error ? err.message : String(err);
-      // A blocked account is a normal outcome, shown to the user on the login page.
-      if (/ACCOUNT_BLOCKED/i.test(message)) return { authError: message };
+      // Blocked accounts and unconfirmed emails are normal outcomes, shown to
+      // the user on the login page.
+      if (/ACCOUNT_BLOCKED|EMAIL_UNCONFIRMED/i.test(message))
+        return { authError: message.replace(/^EMAIL_UNCONFIRMED:\s*/, '') };
       throw err;
     }
   }

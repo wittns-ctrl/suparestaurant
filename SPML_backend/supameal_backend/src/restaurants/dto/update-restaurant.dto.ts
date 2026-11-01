@@ -1,4 +1,6 @@
+import { IsTrustedImageRef } from 'src/common/validators/trusted-image.validator';
 import {
+  ArrayMaxSize,
   IsArray,
   IsInt,
   IsNumber,
@@ -81,7 +83,9 @@ export class UpdateRestaurantDto {
 
   @IsOptional()
   @IsArray()
+  @ArrayMaxSize(20)
   @IsString({ each: true })
+  @IsTrustedImageRef({}, { each: true })
   images?: string[];
 
   @IsOptional()

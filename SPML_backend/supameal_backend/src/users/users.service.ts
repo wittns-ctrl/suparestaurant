@@ -252,8 +252,11 @@ export class UsersService implements OnModuleInit {
   ) {
     this.assertSelfOrAdmin(id, userId, userRole);
 
+    let emailChanged = false;
     if (updateUserDto.email) {
-      const account = await this.userModel.findById(id).select('accountType');
+      const account = await this.userModel
+        .findById(id)
+        .select('accountType email');
       if (!account) throw new NotFoundException('User not found');
       const normalized = updateUserDto.email.trim().toLowerCase();
       const existing = await this.userModel.findOne({
@@ -271,10 +274,20 @@ export class UsersService implements OnModuleInit {
         );
       }
       updateUserDto.email = normalized;
+      emailChanged = normalized !== String(account.email || '').toLowerCase();
     }
 
+    // A changed address is unproven: mark it, and drop any Google link that was
+    // tied to the old address (see User.emailUnconfirmed).
+    const update = emailChanged
+      ? {
+          $set: { ...updateUserDto, emailUnconfirmed: true },
+          $unset: { oauthProvider: 1, oauthProviderId: 1 },
+        }
+      : updateUserDto;
+
     const user = await this.userModel
-      .findByIdAndUpdate(id, updateUserDto, {
+      .findByIdAndUpdate(id, update, {
         returnDocument: 'after',
         runValidators: true,
       })

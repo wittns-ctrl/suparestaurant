@@ -1,4 +1,6 @@
+import { IsTrustedImageRef } from 'src/common/validators/trusted-image.validator';
 import {
+  ArrayMaxSize,
   IsArray,
   IsEnum,
   IsInt,
@@ -71,7 +73,9 @@ export class CreateRestaurantDto {
 
   @IsOptional()
   @IsArray()
+  @ArrayMaxSize(20)
   @IsString({ each: true })
+  @IsTrustedImageRef({}, { each: true })
   images?: string[];
 
   @IsOptional()
@@ -85,7 +89,9 @@ export class CreateRestaurantDto {
 
   @IsOptional()
   @IsArray()
+  @ArrayMaxSize(10)
   @IsString({ each: true })
+  @IsTrustedImageRef({}, { each: true })
   verificationDocs?: string[];
 
   @IsOptional()

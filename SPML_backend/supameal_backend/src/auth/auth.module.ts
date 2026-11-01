@@ -39,8 +39,10 @@ import {
         return {
           secret: configservice.get<string>('JWT_SECRET'),
           signOptions: {
+            algorithm: 'HS256',
             expiresIn: '15m',
           },
+          verifyOptions: { algorithms: ['HS256'] },
         };
       },
     }),

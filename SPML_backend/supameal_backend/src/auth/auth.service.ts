@@ -470,6 +470,13 @@ export class AuthService implements OnModuleInit {
           'ACCOUNT_BLOCKED: Your account has been blocked by an administrator.',
         );
       }
+      // An address changed from the profile page has not been proven yet; it
+      // must not let a Google login into someone else's account.
+      if (user.emailUnconfirmed) {
+        throw new UnauthorizedException(
+          'EMAIL_UNCONFIRMED: This email was recently added to an existing account and is not confirmed yet. Sign in with your password, or use "Forgot password" to confirm it.',
+        );
+      }
       // The same provider must always present the same subject id. A different
       // id for an already-linked email means the Google account changed hands.
       if (
@@ -627,6 +634,8 @@ export class AuthService implements OnModuleInit {
     user.password = await bcrypt.hash(resetDto.newPassword, 12);
     user.resetToken = undefined;
     user.resetTokenExpiration = undefined;
+    // The link was delivered to this address, so it is now proven.
+    user.emailUnconfirmed = false;
     // A reset link is proof the old credentials are compromised — kill all sessions
     user.authSessions = [];
     user.refreshToken = undefined;

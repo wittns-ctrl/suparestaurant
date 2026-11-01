@@ -1,3 +1,4 @@
+import { IsTrustedImageRef } from 'src/common/validators/trusted-image.validator';
 import {
   IsEmail,
   IsIn,
@@ -47,6 +48,7 @@ export class ProfileDto {
   @IsOptional()
   @IsString()
   @MaxLength(3_000_000)
+  @IsTrustedImageRef({ allowDataImage: true, allowGoogleAvatar: true })
   imageurl?: string;
 }
 

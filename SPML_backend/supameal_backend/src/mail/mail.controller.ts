@@ -8,6 +8,7 @@ import { MailService } from './mail.service';
 import { CreateMailDto } from './dto/create-mail.dto';
 import { NewsletterSubscribeDto } from './dto/newsletter-subscribe.dto';
 import { NewsletterUpdateDto } from './dto/newsletter-update.dto';
+import { NewsletterUnsubscribeDto } from './dto/newsletter-unsubscribe.dto';
 
 @Controller('mail')
 export class MailController {
@@ -30,7 +31,7 @@ export class MailController {
 
   @Post('newsletter/unsubscribe')
   @Throttle({ default: { limit: 10, ttl: 60_000 } })
-  unsubscribe(@Body() body: { token: string }) {
+  unsubscribe(@Body() body: NewsletterUnsubscribeDto) {
     return this.mailService.unsubscribeFromNewsletter(body.token);
   }
 

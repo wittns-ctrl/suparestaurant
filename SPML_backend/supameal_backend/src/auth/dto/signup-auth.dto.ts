@@ -1,3 +1,4 @@
+import { IsTrustedImageRef } from 'src/common/validators/trusted-image.validator';
 import {
   IsString,
   IsNotEmpty,
@@ -20,6 +21,7 @@ class ProfileDto {
   @IsOptional()
   @IsString()
   @MaxLength(2048)
+  @IsTrustedImageRef({ allowGoogleAvatar: true })
   imageurl?: string;
 }
 

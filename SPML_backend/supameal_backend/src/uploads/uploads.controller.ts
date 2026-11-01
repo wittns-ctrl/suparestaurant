@@ -2,6 +2,7 @@ import {
   BadRequestException,
   Controller,
   Delete,
+  ForbiddenException,
   NotFoundException,
   Param,
   Post,
@@ -20,6 +21,9 @@ import { RolesGuard } from 'src/common/guards/roles.guard';
 import { Roles } from 'src/common/decorators/roles.decorator';
 import { roles } from 'src/users/schema/user.schema';
 import { CloudinaryService } from './cloudinary.service';
+import { Throttle } from '@nestjs/throttler';
+import { CurrentUser } from 'src/common/decorators/current-user.decorator';
+import { userHasRole } from 'src/common/utils/auth-access.util';
 
 export const UPLOAD_DIR = resolve(process.env.UPLOAD_DIR || './uploads');
 const MAX_FILE_BYTES = 5 * 1024 * 1024; // 5 MB
@@ -55,7 +59,11 @@ function sniffImageExt(buf: Buffer): 'jpg' | 'png' | 'webp' | null {
   return null;
 }
 
-const SAFE_FILENAME = /^[a-f0-9-]{36}\.(jpg|png|webp)$/i;
+// <uploaderId>_<uuid>.<ext> for new files; bare <uuid>.<ext> for older ones.
+const SAFE_FILENAME = /^(?:[a-f0-9]{24}_)?[a-f0-9-]{36}\.(jpg|png|webp)$/i;
+const OBJECT_ID = /^[a-f0-9]{24}$/i;
+
+type Caller = { id: string; role: string; roles?: string[] };
 
 @Controller('uploads')
 @UseGuards(JwtAuthGuard, RolesGuard)
@@ -64,13 +72,15 @@ export class UploadsController {
 
   @Post()
   @Roles(roles.CUSTOMER, roles.OWNER, roles.ADMIN)
+  // Every upload is stored on our Cloudinary account; cap it per visitor.
+  @Throttle({ default: { limit: 10, ttl: 60_000 } })
   @UseInterceptors(
     FileInterceptor('file', {
       storage: memoryStorage(),
       limits: { fileSize: MAX_FILE_BYTES, files: 1 },
     }),
   )
-  async upload(@UploadedFile() file: any) {
+  async upload(@UploadedFile() file: any, @CurrentUser() user: Caller) {
     if (!file) {
       throw new BadRequestException(
         'No file uploaded — send multipart/form-data with a "file" field',
@@ -87,13 +97,18 @@ export class UploadsController {
       );
     }
 
-    // UUID filename — original name never touches the disk
-    const filename = `${randomUUID()}.${ext}`;
+    // Files are namespaced by uploader so ownership can be checked on delete.
+    // The original filename never touches storage.
+    if (!OBJECT_ID.test(String(user?.id))) {
+      throw new ForbiddenException('Unknown uploader');
+    }
+    const id = randomUUID();
+    const filename = `${user.id}_${id}.${ext}`;
     if (this.cloudinary.isConfigured) {
       const asset = await this.cloudinary.upload(
         file.buffer,
         ext,
-        filename.replace(/\.[^.]+$/, ''),
+        `${user.id}/${id}`,
       );
       return {
         url: asset.secure_url,
@@ -110,9 +125,23 @@ export class UploadsController {
 
   @Delete()
   @Roles(roles.OWNER, roles.ADMIN)
-  async removeCloudinary(@Query('publicId') publicId: string) {
-    if (!publicId || !this.cloudinary.isManagedAsset(publicId)) {
+  async removeCloudinary(
+    @Query('publicId') publicId: string,
+    @CurrentUser() user: Caller,
+  ) {
+    if (
+      typeof publicId !== 'string' ||
+      !this.cloudinary.isManagedAsset(publicId)
+    ) {
       throw new BadRequestException('Invalid Cloudinary asset id');
+    }
+    // Owners may only delete images they uploaded themselves; previously any
+    // owner could delete any restaurant's photos by guessing the public id.
+    if (
+      !userHasRole(user, roles.ADMIN) &&
+      !this.cloudinary.isOwnedBy(publicId, user.id)
+    ) {
+      throw new ForbiddenException('You can only delete images you uploaded');
     }
     const deleted = await this.cloudinary.delete(publicId);
     if (!deleted) throw new NotFoundException('Image not found');
@@ -121,9 +150,18 @@ export class UploadsController {
 
   @Delete(':filename')
   @Roles(roles.OWNER, roles.ADMIN)
-  async remove(@Param('filename') filename: string) {
+  async remove(
+    @Param('filename') filename: string,
+    @CurrentUser() user: Caller,
+  ) {
     if (!SAFE_FILENAME.test(filename)) {
       throw new BadRequestException('Invalid filename');
+    }
+    if (
+      !userHasRole(user, roles.ADMIN) &&
+      !filename.startsWith(`${user.id}_`)
+    ) {
+      throw new ForbiddenException('You can only delete images you uploaded');
     }
     const target = resolve(UPLOAD_DIR, filename);
     // Defense in depth: refuse anything that escapes the upload dir

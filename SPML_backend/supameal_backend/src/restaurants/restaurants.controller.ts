@@ -23,6 +23,7 @@ import {
   ApproveRestaurantDto,
 } from './dto/set-status.dto';
 import { AddImagesDto } from './dto/add-images.dto';
+import { RemoveImageDto } from './dto/remove-image.dto';
 import {
   effectiveRestaurantRole,
   userHasRole,
@@ -203,7 +204,7 @@ export class RestaurantsController {
   @Roles(roles.OWNER, roles.ADMIN)
   removeImage(
     @Param('id') id: string,
-    @Body() body: { imageUrl: string },
+    @Body() body: RemoveImageDto,
     @CurrentUser() user: { id: string; role: string },
   ) {
     return this.restaurantsService.removeImage(

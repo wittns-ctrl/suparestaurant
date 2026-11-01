@@ -166,6 +166,25 @@ describe('AuthService security regressions', () => {
       expect(verified.password).toBe('real-hash');
     });
 
+    it('refuses Google sign-in into an account whose email was changed but not confirmed', async () => {
+      const squatted = existingUser({
+        isVerified: true,
+        emailUnconfirmed: true,
+        password: 'attacker-hash',
+      });
+      const { service } = build({ findOne: jest.fn(() => query(squatted)) });
+
+      await expect(
+        service.oauthSignIn({
+          email: 'owner@example.com',
+          name: 'Real Owner',
+          provider: 'google',
+          providerId: 'g-123',
+        }),
+      ).rejects.toThrow(/EMAIL_UNCONFIRMED/);
+      expect(squatted.save).not.toHaveBeenCalled();
+    });
+
     it('rejects a different Google subject for an already-linked email', async () => {
       const linked = existingUser({
         isVerified: true,
