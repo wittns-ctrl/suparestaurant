@@ -196,7 +196,9 @@ export const paymentsApi = {
 };
 
 export const mailApi = {
-  contact: (data) => apiRequest('/mail/contact', { method: 'POST', body: JSON.stringify(data) }),
+  // Longer timeout: the first request after the Render instance idles can
+  // spend 30s+ waking the server before the handler even runs.
+  contact: (data) => apiRequest('/mail/contact', { method: 'POST', body: JSON.stringify(data), timeoutMs: 60000 }),
 };
 
 export const newsletterApi = {

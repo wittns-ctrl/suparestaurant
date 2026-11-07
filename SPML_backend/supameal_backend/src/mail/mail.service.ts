@@ -440,6 +440,12 @@ export class MailService implements OnModuleInit {
 
   // ── Send contact form email ───────────────────────────────────────────
   async sendContactEmail(dto: CreateMailDto) {
+    if (!this.hasEmailProvider()) {
+      throw new ServiceUnavailableException(
+        'Email delivery is not configured. Please try again later or contact support directly.',
+      );
+    }
+
     const supportEmail =
       process.env.SUPPORT_EMAIL?.trim() || 'support@supameal.com';
 
@@ -450,13 +456,31 @@ export class MailService implements OnModuleInit {
     const html = `<p><strong>From:</strong> ${safeName} &lt;${safeEmail}&gt;</p><p>${safeMessage}</p>`;
     const text = `From: ${dto.fullName} <${dto.email}>\n\n${dto.message}`;
 
-    const sent = await this.deliver(supportEmail, subject, html, text);
+    // Deliver in the background. Sendliberty regularly takes 3–12s per call and
+    // a Resend fallback adds up to 10s more, so awaiting delivery here pushed
+    // the contact form past the browser's request timeout. The visitor only
+    // needs to know the message was accepted; failures are logged with the
+    // full message so it can still be recovered from the server logs.
+    void this.deliver(supportEmail, subject, html, text)
+      .then((sent) => {
+        if (!sent) {
+          this.printToConsole('CONTACT', supportEmail, text);
+          this.logger.error(
+            `[CONTACT] Delivery failed for message from ${dto.email}; message content logged above.`,
+          );
+        }
+      })
+      .catch((err: any) => {
+        this.printToConsole('CONTACT', supportEmail, text);
+        this.logger.error(`[CONTACT] Error: ${err?.message || err}`);
+      });
+  }
 
-    if (!sent) {
-      throw new ServiceUnavailableException(
-        'Email delivery is not configured. Please try again later or contact support directly.',
-      );
-    }
+  private hasEmailProvider(): boolean {
+    return Boolean(
+      this.getSendlibertyApiKey() ||
+      (this.getResendApiKey() && this.getResendFromEmail()),
+    );
   }
 
   async subscribeToNewsletter(email: string) {

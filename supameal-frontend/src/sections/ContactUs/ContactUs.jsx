@@ -1,7 +1,7 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { MapPin, Phone, Mail, Send } from 'lucide-react';
 import Button from '../../components/Button/Button';
-import { mailApi } from '../../services/api';
+import { mailApi, API_URL } from '../../services/api';
 import './ContactUs.css';
 
 const supportEmail = import.meta.env.VITE_SUPPORT_EMAIL || 'mugishawitness15@gmail.com';
@@ -11,6 +11,12 @@ const ContactUs = () => {
   const [sent, setSent] = useState(false);
   const [error, setError] = useState('');
   const [sending, setSending] = useState(false);
+
+  // Wake the backend while the visitor reads the page, so an idle Render
+  // instance is already up by the time they press "Send Message".
+  useEffect(() => {
+    fetch(`${API_URL}/health/live`, { cache: 'no-store' }).catch(() => {});
+  }, []);
 
   const updateField = (field, value) => {
     setForm((previous) => ({ ...previous, [field]: value }));
